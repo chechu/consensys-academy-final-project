@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router'
-import { HiddenOnlyAuth, VisibleOnlyAuth } from './util/wrappers.js'
+import { HiddenOnlyAuth, VisibleOnlyAuth, VisibleOnlyAuthorized } from './util/wrappers.js'
 
 // UI Components
 import LoginButtonContainer from './user/ui/loginbutton/LoginButtonContainer'
@@ -35,8 +35,13 @@ class App extends Component {
 
     const OnlyAuthFooter = VisibleOnlyAuth(() =>
       <span>
+        <OnlyAuthorizedData authorizedRoles={['ADMIN']} />
         <FooterContainer/>
       </span>
+    )
+
+    const OnlyAuthorizedData = VisibleOnlyAuthorized(() =>
+        <span>Authorized!</span>
     )
 
     return (
