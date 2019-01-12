@@ -1,55 +1,66 @@
-import { initUport, initBrowserProvider } from './../../../util/connectors.js'
-import { browserHistory } from 'react-router'
+import { initUport, initBrowserProvider } from './../../../util/connectors.js';
+import { browserHistory } from 'react-router';
+import { initContract, contract, ROLES } from '../../../util/contracts/marketplace';
 
-export const USER_LOGGED_IN = 'USER_LOGGED_IN'
+export const USER_LOGGED_IN = 'USER_LOGGED_IN';
 function userLoggedIn(user) {
-  return {
-    type: USER_LOGGED_IN,
-    payload: user
-  }
+    return {
+        type: USER_LOGGED_IN,
+        payload: user,
+    }
 }
 
 function redirectAfterLogin() {
     // Used a manual redirect here as opposed to a wrapper.
     // This way, once logged in a user can still access the home page.
-    const currentLocation = browserHistory.getCurrentLocation()
+    const currentLocation = browserHistory.getCurrentLocation();
 
     if ('redirect' in currentLocation.query) {
-        return browserHistory.push(decodeURIComponent(currentLocation.query.redirect))
+        return browserHistory.push(decodeURIComponent(currentLocation.query.redirect));
     }
-    return browserHistory.push('/dashboard')
+    return browserHistory.push('/dashboard');
+}
+
+function getRole(dispatch, address) {
+    initContract(address);
+    return contract.methods.getRole().call().then(role => {
+        const roleName = ROLES.getRoleName(role);
+        dispatch(userLoggedIn({ address, role: { name: roleName, id: role } }));
+        return redirectAfterLogin();
+    });
 }
 
 function browserProviderLogin() {
     return function(dispatch) {
         return initBrowserProvider().then((web3) => {
-            return new Promise((resolve) => {
+            const getAddress = new Promise((resolve, reject) => {
                 if (web3) {
                     web3.eth.getCoinbase((error, address) => {
                         if (error) {
                             console.log('Error getting the ETH address: ', error);
+                            reject(error);
                         } else {
-                            dispatch(userLoggedIn({ address }));
-                            resolve(redirectAfterLogin());
+                            resolve(address);
                         }
                     });
                 }
             });
+            return getAddress.then(getRole.bind(this, dispatch));
         });
     }
 }
 
 function uportLogin() {
   return function(dispatch) {
-    const { web3, uport } = initUport();
-    return new Promise((resolve) => {
+    const { web3 } = initUport();
+    const getAddress = new Promise((resolve, reject) => {
         if (web3) {
             web3.eth.getCoinbase((error, address) => {
                 if (error) {
                     console.log('Error getting the ETH address: ', error);
+                    reject(error);
                 } else {
-                    dispatch(userLoggedIn({ address, did: uport.did }));
-                    resolve(redirectAfterLogin());
+                    resolve(address);
                 }
                 /*
                 uport.requestDisclosure({requested: ['name', 'country', 'image', 'avatar'], notifications: true, verified: ['Jesus Marketplace info']});
@@ -61,6 +72,7 @@ function uportLogin() {
             });
         }
     });
+    return getAddress.then(getRole.bind(this, dispatch));
   }
 }
 

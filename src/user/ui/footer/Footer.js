@@ -1,9 +1,9 @@
 import React from 'react'
 
-const Footer = ({ address }) => {
+const Footer = ({ address, roleName }) => {
   return(
   	<span>
-        Address: {address}
+        Address: {address} | Role: {roleName}
   	</span>
   )
 }
