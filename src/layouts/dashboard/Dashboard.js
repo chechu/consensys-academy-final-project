@@ -1,25 +1,24 @@
-import React, { Component } from 'react'
-import SendVerificationButtonContainer from '../../user/ui/sendVerificationButton/SendVerificationButtonContainer';
+import React, { Component } from 'react';
+import AddSellerContainer from '../../user/ui/addSellerForm/AddSellerContainer';
+import { VisibleOnlyAuthorized } from '../../util/wrappers.js';
 
 class Dashboard extends Component {
-  constructor(props, { authData }) {
-    super(props)
-    authData = this.props
-  }
+    render() {
+        const AddSellerForm = VisibleOnlyAuthorized(() =>
+            <AddSellerContainer from={this.props.authData.address} />
+        )
 
-  render() {
-    return(
-      <main className="container">
-        <div className="pure-g">
-          <div className="pure-u-1-1">
-            <h1>Dashboard</h1>
-            <p><strong>Congratulations {this.props.authData.name}!</strong> If you're seeing this page, you've logged in with UPort successfully.</p>
-            <SendVerificationButtonContainer/>
-          </div>
-        </div>
-      </main>
-    )
-  }
+        return(
+            <main className="container">
+                <div className="pure-g">
+                    <div className="pure-u-1-1">
+                        <h1>Dashboard</h1>
+                        <AddSellerForm authorizedRoles={['ADMIN']}/>
+                    </div>
+                </div>
+            </main>
+        )
+    }
 }
 
 export default Dashboard
