@@ -4,6 +4,7 @@ import Web3 from 'web3';
 
 let web3;
 let uport;
+const HTTP_PROVIDER_URL = 'http://127.0.0.1:8545'; // ganache-cli
 
 export function initUport() {
     uport = new Connect('Jesus Marketplace', {
@@ -51,6 +52,7 @@ export async function initBrowserProvider() {
     // Non-dapp browsers...
     else {
         console.log('Non-Ethereum browser detected. You should consider trying MetaMask!');
+        web3 = new Web3(new web3.providers.HttpProvider(HTTP_PROVIDER_URL));
     }
 
     return web3;
