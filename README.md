@@ -3,6 +3,9 @@ ConsenSys Academy’s 2018 Developer Program Final Project
 
 I'm using Uport Connect to make a simple (not production ready) integration with Uport, where the requests are signed in the Browser Application with a temporary (stored in the local storage) private key (for more info see https://developer.uport.me/uport-connect/reference/index#Connect+sendVerification)
 
+## How did I remove an item from an indexed and unsorted array
+Moving the last item of the array on the position of the item that I want to remove, and decrementing the length of the array. Inspired in https://github.com/su-squares/ethereum-contract/blob/master/contracts/SuNFT.sol#L296.
+
 # Relevant links
 
 ## Stylesheets

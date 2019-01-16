@@ -41,6 +41,8 @@ contract Marketplace is Ownable {
   event AdminRemoved(address oldAdmin);
 
   event StoreCreated(address seller, string name, bytes32 storeId);
+  event StoreRemoved(address seller, bytes32 storeId);
+  event ItemCreated(address seller, bytes32 storeId, uint sku, string name, uint price, uint availableAmount);
 
   /* Roles modifiers */
   modifier isAdmin () { require (privilegedUsers[msg.sender] && roles[msg.sender] == Roles.ADMIN); _;}
@@ -88,7 +90,7 @@ contract Marketplace is Ownable {
   /* Managing stores */
 
   function addStore(string memory name) public isSeller {
-    // TODO Check that "name" is not empty
+    require(bytes(name).length > 0, 'The name of the store cannot be empty');
 
     bytes32 storeId = keccak256(abi.encodePacked(msg.sender, name));
     require(empires[msg.sender].stores[storeId].storeId == 0, 'The seller must not have two stores with the same name');
@@ -98,10 +100,28 @@ contract Marketplace is Ownable {
     empire.storesIds.push(storeId);
 
     emit StoreCreated(msg.sender, name, storeId);
-}
+  }
 
-  function removeStore(bytes32 storeId) public isSeller isSellerOwner(storeId) {
+  function removeStore(bytes32 storeId, uint storeIndex) public isSeller isSellerOwner(storeId) {
     // TODO - Taking into account this: https://solidity.readthedocs.io/en/develop/types.html#delete
+    Empire storage empire = empires[msg.sender];
+    Store storage store = empires[msg.sender].stores[storeId];
+
+    // Removing items associated with the store
+    for(uint skuIndex = 0; skuIndex < store.skus.length; skuIndex++) {
+        delete store.items[store.skus[skuIndex]];
+    }
+
+    // Removing the store
+    delete empire.stores[storeId];
+
+    // Removing and compacting an item in an array: https://github.com/su-squares/ethereum-contract/blob/master/contracts/SuNFT.sol#L296
+    if (empire.storesIds.length > 1 && storeIndex != empire.storesIds.length - 1)    {
+        empire.storesIds[storeIndex] = empire.storesIds[empire.storesIds.length - 1];
+    }
+    empire.storesIds.length--;
+
+    emit StoreRemoved(msg.sender, storeId);
   }
 
   function getNumberOfStores(address seller) public view returns(uint) {
@@ -125,23 +145,30 @@ contract Marketplace is Ownable {
 
   function addItem(bytes32 storeId, uint sku, string memory name, uint price, uint availableAmount)
     public
-    isSeller()
+    isSeller
     isSellerOwner(storeId) {
     Store storage store = empires[msg.sender].stores[storeId];
 
     // Checking that there aren't any item with the same sku in the store
-    require(store.items[sku].sku == 0);
+    require(store.items[sku].sku == 0, 'SKU must be unique for a store');
 
     // TODO Check integer overflows (more in the buy operation)
-    require(price > 0 && availableAmount > 0);
-    store.items[sku] = Item({ sku: sku, name: name, price: price, availableAmount: availableAmount });
+    require(price > 0, 'Price must be a positive number');
+    require(availableAmount > 0, 'Available amount must be a positive number');
 
+    store.items[sku] = Item({ sku: sku, name: name, price: price, availableAmount: availableAmount });
     store.skus.push(sku);
+
+    emit ItemCreated(msg.sender, storeId, sku, name, price, availableAmount);
+  }
+
+  function getNumberOfItems(address seller, bytes32 storeId) public view returns(uint) {
+    Empire storage empire = empires[seller];
+    return empire.stores[storeId].skus.length;
   }
 
   function getSku(address seller, bytes32 storeId, uint skuIndex) public view returns(uint) {
-    Store storage store = empires[seller].stores[storeId];
-    return store.skus[skuIndex];
+    return empires[seller].stores[storeId].skus[skuIndex];
   }
 
   function getItemMetadata(address seller, bytes32 storeId, uint sku)
