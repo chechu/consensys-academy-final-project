@@ -36,7 +36,9 @@ contract Marketplace is Ownable {
 
   /* Events */
   event SellerAdded(address newSeller);
+  event SellerRemoved(address oldSeller);
   event AdminAdded(address newAdmin);
+  event AdminRemoved(address oldAdmin);
 
   event StoreCreated(address seller, string name, bytes32 storeId);
 
@@ -46,9 +48,9 @@ contract Marketplace is Ownable {
   modifier isBuyer (address _address) { require (!privilegedUsers[_address]); _;}
 
   /* Ownership modifiers */
-  modifier isSellerOwner (bytes32 storeId) { require(empires[msg.sender].stores[storeId].storeId.length > 0); _; }
+  modifier isSellerOwner (bytes32 storeId) { require(empires[msg.sender].stores[storeId].storeId != 0); _; }
   modifier isItemSeller (bytes32 storeId, uint sku) {
-    require (empires[msg.sender].stores[storeId].storeId.length > 0);
+    require (empires[msg.sender].stores[storeId].storeId != 0);
     require (empires[msg.sender].stores[storeId].items[sku].sku != 0);
     _;
   }
@@ -65,30 +67,40 @@ contract Marketplace is Ownable {
     emit AdminAdded(newAdmin);
   }
 
-  function addSeller(address newSeller) public isAdmin() isBuyer(newSeller) {
+  function removeAdmin(address oldAdmin) public onlyOwner {
+    delete roles[oldAdmin];
+    delete privilegedUsers[oldAdmin];
+    emit AdminRemoved(oldAdmin);
+  }
+
+  function addSeller(address newSeller) public isAdmin isBuyer(newSeller) {
     roles[newSeller] = Roles.SELLER;
     privilegedUsers[newSeller] = true;
     emit SellerAdded(newSeller);
   }
 
+  function removeSeller(address oldSeller) public isAdmin {
+    delete roles[oldSeller];
+    delete privilegedUsers[oldSeller];
+    emit SellerRemoved(oldSeller);
+  }
+
   /* Managing stores */
 
-  function addStore(string memory name) public isSeller() returns(bytes32) {
+  function addStore(string memory name) public isSeller {
     // TODO Check that "name" is not empty
 
     bytes32 storeId = keccak256(abi.encodePacked(msg.sender, name));
-    require(empires[msg.sender].stores[storeId].storeId.length == 0);
+    require(empires[msg.sender].stores[storeId].storeId == 0, 'The seller must not have two stores with the same name');
 
     Empire storage empire = empires[msg.sender];
     empire.stores[storeId] = Store({ storeId: storeId, seller: msg.sender, name: name, skus: new uint[](0) });
     empire.storesIds.push(storeId);
 
     emit StoreCreated(msg.sender, name, storeId);
+}
 
-    return storeId;
-  }
-
-  function removeStore(bytes32 storeId) public isSeller() isSellerOwner(storeId) {
+  function removeStore(bytes32 storeId) public isSeller isSellerOwner(storeId) {
     // TODO - Taking into account this: https://solidity.readthedocs.io/en/develop/types.html#delete
   }
 
