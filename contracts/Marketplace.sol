@@ -46,12 +46,14 @@ contract Marketplace is Ownable {
   modifier isBuyer (address _address) { require (!privilegedUsers[_address]); _;}
 
   /* Ownership modifiers */
-  modifier isSellerOwner (bytes32 storeId) { require(true); /* (empires[msg.sender].stores[storeId]); */_; }
+  modifier isSellerOwner (bytes32 storeId) { require(empires[msg.sender].stores[storeId].storeId.length > 0); _; }
   modifier isItemSeller (bytes32 storeId, uint sku) {
-    // require (empires[msg.sender].stores[storeId]);
-    // require (empires[msg.sender].stores[storeId].items[sku]);
+    require (empires[msg.sender].stores[storeId].storeId.length > 0);
+    require (empires[msg.sender].stores[storeId].items[sku].sku != 0);
     _;
   }
+
+  /* Managing permissions */
 
   function getRole() public view returns(Roles) {
     return privilegedUsers[msg.sender] ? roles[msg.sender] : Roles.BUYER;
@@ -71,11 +73,11 @@ contract Marketplace is Ownable {
 
   /* Managing stores */
 
-  function addStore(bytes32 name) public isSeller() returns(bytes32) {
+  function addStore(string memory name) public isSeller() returns(bytes32) {
     // TODO Check that "name" is not empty
 
     bytes32 storeId = keccak256(abi.encodePacked(msg.sender, name));
-    require(bytes(empires[msg.sender].stores[storeId].storeId).length == 0);
+    require(empires[msg.sender].stores[storeId].storeId.length == 0);
 
     Empire storage empire = empires[msg.sender];
     empire.stores[storeId] = Store({ storeId: storeId, seller: msg.sender, name: name, skus: new uint[](0) });
