@@ -1,13 +1,13 @@
 import React from 'react';
 
-class AddSeller extends React.Component {
+class AddStore extends React.Component {
     constructor(props) {
         super(props);
 
         this.state = { value: '' };
 
         this.handleChange = this.handleChange.bind(this);
-        this.onAddSellerClick = props.onAddSellerClick;
+        this.onAddStoreClick = props.onAddStoreClick;
     }
 
     handleChange(event) {
@@ -16,10 +16,10 @@ class AddSeller extends React.Component {
 
     render() {
         return (
-            <form onSubmit={(event) => { this.onAddSellerClick(event, this.state.value)}}>
-                <strong>Add seller</strong><br/>
+            <form onSubmit={(event) => { this.onAddStoreClick(event, this.state.value)}}>
+                <strong>Add store</strong><br/>
                 <label>
-                    Seller address:
+                    Store name:
                     <input type="text" value={this.state.value} onChange={this.handleChange} />
                 </label>
                 <input type="submit" value="Submit" />
@@ -28,4 +28,4 @@ class AddSeller extends React.Component {
     }
 }
 
-export default AddSeller
+export default AddStore
