@@ -2,7 +2,6 @@ import React from 'react';
 import { Button, Icon, Image, Item, Label, Divider, Header } from 'semantic-ui-react';
 import { contract } from '../../../util/contracts/marketplace';
 import { getWeb3 } from '../../../util/connectors';
-import { addressToBytes32, bytes32ToAddress } from '../../../util/utils';
 
 class ListStore extends React.Component {
     constructor(props) {
@@ -18,7 +17,6 @@ class ListStore extends React.Component {
     async getStoreIds(sellerAddress) {
         const promises = [];
         const numberOfStores = await this.getNumberOfStores(sellerAddress);
-        console.log({numberOfStores})
         for(let i = 0; i < numberOfStores; i++) {
             promises.push(contract.methods.getStoreId(sellerAddress, i).call());
         }
@@ -27,34 +25,37 @@ class ListStore extends React.Component {
 
     getStoresMetadata(sellerAddresses) {
         return Promise.all(sellerAddresses.map(sellerAddress => (this.getStoreIds(sellerAddress)
-            .then(storeIds => Promise.all(storeIds.map(storeId => contract.methods.getStoreMetadata(this.web3.utils.asciiToHex(sellerAddress), this.web3.utils.asciiToHex(storeIds)).call())))
+            .then(storeIds => Promise.all(storeIds.map(async storeId => {
+                const storeMetadata = await contract.methods.getStoreMetadata(sellerAddress, storeId).call();
+                return { name: storeMetadata[0], numItems: storeMetadata[1] };
+            })))
+            .then(metadatas => ({ [sellerAddress]: metadatas }))
         )));
     }
 
     getSellerAddresses() {
-        const stringAddresses = [this.props.seller];
-        return stringAddresses.map(it => addressToBytes32(it));
+        return [this.props.seller];
     }
 
-    componentDidMount() {
+    async componentDidMount() {
         const sellers = this.getSellerAddresses();
-        this.getStoresMetadata(sellers).then((metadata) => {
-            const metadataMap = sellers.reduce((acc, current, index) => { acc[bytes32ToAddress(current)] = metadata[index]; return acc; }, {});
+        await this.getStoresMetadata(sellers).then((metadatas) => {
+            const metadataMap = metadatas.reduce((acc, current) => ({ ...acc, ...current }), {})
             this.setState({ metadata: metadataMap });
         })
     }
 
-    getStoreListItems() {
-        const items = this.state.metadata.map(name =>
-            <Item key={name}>
+    getStoreItems(sellerAddress) {
+        const items = this.state.metadata[sellerAddress].map(storeMetadata =>
+            <Item key={storeMetadata.name}>
                 <Item.Image src='https://react.semantic-ui.com/images/wireframe/image.png' />
 
                 <Item.Content>
-                    <Item.Header as='a'>{name}</Item.Header>
+                    <Item.Header as='a'>{storeMetadata.name}</Item.Header>
                     <Item.Meta>
                         <span className='cinema'>Union Square 14</span>
                     </Item.Meta>
-                    <Item.Description>{'paragraph'}</Item.Description>
+                    <Item.Description>Number of items: {storeMetadata.numItems}</Item.Description>
                     <Item.Extra>
                         <Label>IMAX</Label>
                         <Label icon='globe' content='Additional Languages' />
@@ -64,19 +65,24 @@ class ListStore extends React.Component {
         );
 
         return (
-            <span>
-            <Divider horizontal>
-                <Header as='h4'>
-                    <Icon name='tag' />
-                    Description
-                </Header>
-            </Divider>
-            <Item.Group divided>{items}</Item.Group></span>
+            <span key={sellerAddress}>
+                <Divider horizontal>
+                    <Header as='h4'>
+                        <Icon name='gift' />
+                        Stores of seller: {sellerAddress}
+                    </Header>
+                </Divider>
+                <Item.Group divided>{items}</Item.Group>
+            </span>
         )
     }
 
     render() {
-        return (<span>{this.getStoreListItems()}</span>)
+        const stores = [];
+        Object.keys(this.state.metadata).forEach((sellerAddress) => {
+            stores.push(this.getStoreItems(sellerAddress));
+        });
+        return (<span>{stores}</span>)
     }
 }
 
