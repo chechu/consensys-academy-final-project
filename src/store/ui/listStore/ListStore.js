@@ -1,5 +1,6 @@
 import React from 'react';
 import { Button, Icon, Image, Item, Label, Divider, Header } from 'semantic-ui-react';
+import { Link } from 'react-router';
 import { contract } from '../../../util/contracts/marketplace';
 import { getWeb3 } from '../../../util/connectors';
 
@@ -27,7 +28,7 @@ class ListStore extends React.Component {
         return Promise.all(sellerAddresses.map(sellerAddress => (this.getStoreIds(sellerAddress)
             .then(storeIds => Promise.all(storeIds.map(async storeId => {
                 const storeMetadata = await contract.methods.getStoreMetadata(sellerAddress, storeId).call();
-                return { name: storeMetadata[0], numItems: storeMetadata[1] };
+                return { name: storeMetadata[0], numItems: storeMetadata[1], storeId };
             })))
             .then(metadatas => ({ [sellerAddress]: metadatas }))
         )));
@@ -47,11 +48,11 @@ class ListStore extends React.Component {
 
     getStoreItems(sellerAddress) {
         const items = this.state.metadata[sellerAddress].map(storeMetadata =>
-            <Item key={storeMetadata.name}>
+            <Item key={storeMetadata.name} as={Link} to={'/store/' + storeMetadata.storeId}>
                 <Item.Image src='https://react.semantic-ui.com/images/wireframe/image.png' />
 
                 <Item.Content>
-                    <Item.Header as='a'>{storeMetadata.name}</Item.Header>
+                    <Item.Header>{storeMetadata.name}</Item.Header>
                     <Item.Meta>
                         <span className='cinema'>Union Square 14</span>
                     </Item.Meta>
