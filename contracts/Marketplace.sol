@@ -159,7 +159,7 @@ contract Marketplace is Ownable {
     store.items[sku] = Item({ sku: sku, name: name, price: price, availableAmount: availableAmount });
     store.skus.push(sku);
 
-    emit ItemCreated(msg.sender, storeId, sku, name, price, availableAmount);
+    emit ItemCreated(msg.sender, store.storeId, sku, name, price, availableAmount);
   }
 
   function getNumberOfItems(address seller, bytes32 storeId) public view returns(uint) {

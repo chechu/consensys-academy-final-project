@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import AddSellerContainer from '../../user/ui/addSellerForm/AddSellerContainer';
 import AddStoreContainer from '../../store/ui/addStoreForm/AddStoreContainer';
-import ListStore from '../../store/ui/listStore/ListStore';
+import ListStoreContainer from '../../store/ui/listStore/ListStoreContainer';
 import { VisibleOnlyAuthorized } from '../../util/wrappers.js';
 
 class Dashboard extends Component {
@@ -13,7 +13,7 @@ class Dashboard extends Component {
             <AddStoreContainer />
         )
         const ListSellerStores = VisibleOnlyAuthorized(() =>
-            <ListStore seller={this.props.authData.address} />
+            <ListStoreContainer seller={this.props.authData.address} />
         )
 
         return(

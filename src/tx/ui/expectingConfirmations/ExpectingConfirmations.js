@@ -15,8 +15,6 @@ class ExpectingConfirmations extends Component {
             }
         });
 
-        console.log('Rendering confirmations...', pendingTx);
-
         return (
             <span>
                 Waiting for [{pendingTx.length}] transactions.
