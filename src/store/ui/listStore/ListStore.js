@@ -3,10 +3,6 @@ import { Icon, Item, Divider, Header } from 'semantic-ui-react';
 import StoreSummaryContainer from '../storeSummary/StoreSummaryContainer';
 
 class ListStore extends React.Component {
-    constructor(props) {
-        super(props);
-    }
-
     getSellerAddresses() {
         // TODO: Support of multi sellers
         return [this.props.seller];

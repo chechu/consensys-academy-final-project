@@ -21,12 +21,16 @@ export function pullStore(sellerAddress, storeId, forceFetch) {
             && getState().store.storesBySeller[sellerAddress].stores.find(it => it.storeId === storeId);
 
         if (!newStoresMetadata || forceFetch) {
-            contract.getStoreMetadata(sellerAddress, storeId)
-                .then(store => dispatch({
+            const storeMetada = contract.getStoreMetadata(sellerAddress, storeId);
+            const itemsMetada = contract.getItemsMetadata(sellerAddress, storeId);
+            Promise.all([storeMetada, itemsMetada]).then(([store, items]) => {
+                store.items = items;
+                dispatch({
                     type: PULL_STORE,
                     sellerAddress,
                     store,
-                }));
+                })
+            })
         }
     }
 }

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
-import { Item } from 'semantic-ui-react';
+import { Item, Divider, Header, Icon } from 'semantic-ui-react';
 import StoreSummaryContainer from '../ui/storeSummary/StoreSummaryContainer';
+import ListItemContainer from '../../item/ui/listItem/ListItemContainer';
 
 class Store extends Component {
 
@@ -21,9 +22,12 @@ class Store extends Component {
                     <div className="pure-u-1-1">
                         <h1><span>My store id: {this.storeId}</span></h1>
                         { this.props.store &&
-                            <Item.Group divided>
-                                <StoreSummaryContainer key={this.props.store.name} sellerAddress={this.sellerAddress} storeId={this.storeId} />
-                            </Item.Group>
+                            <span>
+                                <Item.Group divided>
+                                    <StoreSummaryContainer key={this.props.store.name} sellerAddress={this.sellerAddress} storeId={this.storeId} />
+                                </Item.Group>
+                                <ListItemContainer sellerAddress={this.sellerAddress} storeId={this.storeId} />
+                            </span>
                         }
                     </div>
                 </div>

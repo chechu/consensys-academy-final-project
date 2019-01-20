@@ -47,6 +47,29 @@ export async function getStoresMetadataBySellers(sellerAddresses) {
     return metadatas.reduce((acc, current) => ({ ...acc, ...current }), {})
 }
 
+export function getNumberOfItems(sellerAddress, storeId) {
+    return contract.methods.getNumberOfItems(sellerAddress, storeId).call();
+}
+
+export async function getSkus(sellerAddress, storeId) {
+    const promises = [];
+    const numberOfItems = await getNumberOfItems(sellerAddress, storeId);
+    for(let i = 0; i < numberOfItems; i++) {
+        promises.push(contract.methods.getSku(sellerAddress, storeId, i).call());
+    }
+    return Promise.all(promises);
+}
+
+export async function getItemMetadata(sellerAddress, storeId, sku) {
+    const itemMetadata = await contract.methods.getItemMetadata(sellerAddress, storeId, sku).call();
+    return { name: itemMetadata[0], price: itemMetadata[1], availableAmmount: itemMetadata[2], sku };
+}
+
+export async function getItemsMetadata(sellerAddress, storeId) {
+    const skus = await getSkus(sellerAddress, storeId);
+    return Promise.all(skus.map(sku => getItemMetadata(sellerAddress, storeId, sku)));
+}
+
 const getRoleName = (roleId) => {
     return Object.keys(ROLES).find(key => ROLES[key] === roleId);
 }
