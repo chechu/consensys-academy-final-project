@@ -35,13 +35,8 @@ class App extends Component {
 
     const OnlyAuthFooter = VisibleOnlyAuth(() =>
       <span>
-        <OnlyAuthorizedData authorizedRoles={['ADMIN']} />
         <FooterContainer/>
       </span>
-    )
-
-    const OnlyAuthorizedData = VisibleOnlyAuthorized(() =>
-        <span>Authorized!</span>
     )
 
     return (

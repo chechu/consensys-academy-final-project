@@ -1,8 +1,8 @@
 import { initUport, initBrowserProvider } from './../../../util/connectors.js';
 import { browserHistory } from 'react-router';
 import { initContract, contract, ROLES } from '../../../util/contracts/marketplace';
+import { USER_LOGGED_IN } from '../../../util/actions';
 
-export const USER_LOGGED_IN = 'USER_LOGGED_IN';
 function userLoggedIn(user) {
     return {
         type: USER_LOGGED_IN,
@@ -40,7 +40,7 @@ function browserProviderLogin() {
                             console.log('Error getting the ETH address: ', error);
                             reject(error);
                         } else {
-                            resolve(address);
+                            resolve(address.toUpperCase());
                         }
                     });
                 }
@@ -60,7 +60,7 @@ function uportLogin() {
                     console.log('Error getting the ETH address: ', error);
                     reject(error);
                 } else {
-                    resolve(address);
+                    resolve(address.toUpperCase());
                 }
                 /*
                 uport.requestDisclosure({requested: ['name', 'country', 'image', 'avatar'], notifications: true, verified: ['Jesus Marketplace info']});
