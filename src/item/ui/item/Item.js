@@ -1,5 +1,6 @@
 import React from 'react';
-import { Card, Button, Icon } from 'semantic-ui-react';
+import { Card, Button } from 'semantic-ui-react';
+import RemoveItemContainer from '../removeItem/RemoveItemContainer';
 
 class Item extends React.Component {
     constructor(props) {
@@ -22,11 +23,7 @@ class Item extends React.Component {
                         <Button basic color='green'>
                             Approve
                         </Button>
-                        { this.isOwner &&
-                            <Button basic color='red'>
-                                <Icon name='trash alternate'/>Remove
-                            </Button>
-                        }
+                        { this.isOwner && <RemoveItemContainer item={this.props.item} />}
                     </div>
                 </Card.Content>
             </Card>

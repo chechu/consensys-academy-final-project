@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Item } from 'semantic-ui-react';
 import StoreSummaryContainer from '../ui/storeSummary/StoreSummaryContainer';
 import ListItemContainer from '../../item/ui/listItem/ListItemContainer';
+import { pullItems } from '../../util/actions';
 
 class Store extends Component {
 
@@ -24,7 +25,7 @@ class Store extends Component {
                         { this.props.store &&
                             <span>
                                 <Item.Group divided>
-                                    <StoreSummaryContainer key={this.props.store.name} _store={this.props.store} />
+                                    <StoreSummaryContainer key={this.props.store.name} _store={this.props.store} pullAction={pullItems} />
                                 </Item.Group>
                                 <ListItemContainer _store={this.props.store} />
                             </span>

@@ -6,6 +6,9 @@ let web3;
 let uport;
 const HTTP_PROVIDER_URL = 'http://127.0.0.1:8545'; // ganache-cli
 
+export const DEFAULT_GAS_PRICE = '50000000000'; // 50 gwei in this case
+export const DEFAULT_GAS_LIMIT_DELETE_OPERATION = 100000;
+
 export function initUport() {
     uport = new Connect('Jesus Marketplace', {
         network: 'rinkeby',

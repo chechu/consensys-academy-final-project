@@ -147,7 +147,7 @@ contract('Marketplace', function(accounts) {
                 assert.equal(storeId.toString(), '0x919591938c1925b99008bbc43aa5693f4567519de87d2923c28776acd234ceed');
             });
 
-            it('should get the metada associated with a store', async() => {
+            it('should get the metadata associated with a store', async() => {
                 // Given
                 const storeName = 'TestStore:metadata';
                 const itemName = 'TestItem:metadata';
@@ -264,7 +264,7 @@ contract('Marketplace', function(accounts) {
         });
 
         describe('Getting item data', () => {
-            it('should get the metada associated with a store', async() => {
+            it('should get the metadata associated with an item', async() => {
                 // Given
                 const storeName = 'TestStore:itemMetadata';
                 const item = { sku: 1, name: 'TestItem:itemMetadata', price: 5, amount: 10 };
@@ -281,6 +281,72 @@ contract('Marketplace', function(accounts) {
                 assert.equal(response['0'], item.name);
                 assert.equal(response['1'], item.price);
                 assert.equal(response['2'], item.amount);
+            });
+        });
+
+        describe('Removing items', () => {
+            it('should remove one item belonging to the seller', async () => {
+                // Given
+                const storeName = 'TestStore:itemRemoveOwn';
+                const item = { sku: 1, name: 'TestItem:itemRemoveOwn', price: 5, amount: 10 };
+                await marketplaceInstance.addStore(storeName, { from: seller });
+                const storeId = await marketplaceInstance.getStoreId.call(seller, 0);
+                await marketplaceInstance.addItem(storeId, item.sku, item.name, item.price, item.amount, {from:seller});
+                const sku = await marketplaceInstance.getSku.call(seller, storeId, 0); // getting the sku of the first (and unique) item
+
+                // When
+                const tx = await marketplaceInstance.removeItem(storeId, sku, {from:seller});
+                const numItems = await marketplaceInstance.getNumberOfItems.call(seller, storeId);
+
+                // Then
+                assert.equal(tx.logs[0].event, 'ItemRemoved');
+                assert.equal(tx.logs[0].args.seller.toString(), seller);
+                assert.equal(tx.logs[0].args.storeId.toString(), storeId);
+                assert.equal(tx.logs[0].args.sku, item.sku);
+                assert.equal(numItems, 0);
+            });
+
+            it('shouldn\'t remove one item belonging to other seller', async () => {
+                // Given
+                const storeName = 'TestStore:itemRemoveOther';
+                const item = { sku: 1, name: 'TestItem:itemRemoveOther', price: 5, amount: 10 };
+                await marketplaceInstance.addStore(storeName, { from: seller });
+                const storeId = await marketplaceInstance.getStoreId.call(seller, 0);
+                await marketplaceInstance.addItem(storeId, item.sku, item.name, item.price, item.amount, {from:seller});
+                const sku = await marketplaceInstance.getSku.call(seller, storeId, 0); // getting the sku of the first (and unique) item
+
+                try {
+                    // When
+                    await marketplaceInstance.removeItem(storeId, sku, {from:secondarySeller});
+                    assert.fail('Another seller is trying to remove an item in your store');
+                } catch (error) {
+                    // Then -> success
+                }
+                const numItems = await marketplaceInstance.getNumberOfItems.call(seller, storeId);
+
+                // Then
+                assert.equal(numItems, 1);
+            });
+
+            it('shouldn\'t remove a non existing item', async () => {
+                // Given
+                const storeName = 'TestStore:itemRemoveOther';
+                const item = { sku: 1, name: 'TestItem:itemRemoveOther', price: 5, amount: 10 };
+                await marketplaceInstance.addStore(storeName, { from: seller });
+                const storeId = await marketplaceInstance.getStoreId.call(seller, 0);
+                await marketplaceInstance.addItem(storeId, item.sku, item.name, item.price, item.amount, {from:seller});
+
+                try {
+                    // When
+                    await marketplaceInstance.removeItem(storeId, item.sku + 1, {from:secondarySeller});
+                    assert.fail('A seller has remove a non existing item');
+                } catch (error) {
+                    // Then -> success
+                }
+                const numItems = await marketplaceInstance.getNumberOfItems.call(seller, storeId);
+
+                // Then
+                assert.equal(numItems, 1);
             });
         });
     });

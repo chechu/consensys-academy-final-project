@@ -8,11 +8,11 @@ const mapStateToProps = (state, ownProps) => {
     }
 }
 
-const mapDispatchToProps = (dispatch) => {
+const mapDispatchToProps = (dispatch, ownProps) => {
     return {
         onAddItemClick: (event, itemProps, closeModal) => {
             event.preventDefault();
-            dispatch(addItem(itemProps))
+            dispatch(addItem(itemProps, ownProps.pullAction))
             closeModal();
         }
     }

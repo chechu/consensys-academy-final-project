@@ -6,6 +6,8 @@ I'm using Uport Connect to make a simple (not production ready) integration with
 ## How did I remove an item from an indexed and unsorted array
 Moving the last item of the array on the position of the item that I want to remove, and decrementing the length of the array. Inspired in https://github.com/su-squares/ethereum-contract/blob/master/contracts/SuNFT.sol#L296.
 
+According to this: https://ethereum.stackexchange.com/a/39302 You don't need to delete explicitly using `delete array[index]`. It's enough with `array.length--`.
+
 # Relevant links
 
 ## Stylesheets

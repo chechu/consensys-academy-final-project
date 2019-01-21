@@ -1,6 +1,7 @@
 import React from 'react';
 import { Icon, Item, Divider, Header } from 'semantic-ui-react';
 import StoreSummaryContainer from '../storeSummary/StoreSummaryContainer';
+import { pullStore } from '../../../util/actions';
 
 class ListStore extends React.Component {
     getSellerAddresses() {
@@ -17,7 +18,7 @@ class ListStore extends React.Component {
         let items;
         if (this.props.stores && this.props.stores[sellerAddress]) {
             items = this.props.stores[sellerAddress].stores.map(storeMetadata =>
-                <StoreSummaryContainer key={storeMetadata.name} _store={storeMetadata} />
+                <StoreSummaryContainer key={storeMetadata.name} _store={storeMetadata} pullAction={pullStore} />
             );
         }
 

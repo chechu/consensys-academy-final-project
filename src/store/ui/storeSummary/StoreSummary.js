@@ -30,7 +30,7 @@ class StoreSummary extends React.Component {
                     </Item.Meta>
                     <Item.Description>Number of items: {this.props._store.numItems}</Item.Description>
                     <Item.Extra>
-                        { this.isOwner && <AddItemContainer storeId={this.props._store.storeId} /> }
+                        { this.isOwner && <AddItemContainer storeId={this.props._store.storeId} pullAction={this.props.pullAction} /> }
                         <Label icon='globe' content='Additional Languages' />
                     </Item.Extra>
                 </Item.Content>
