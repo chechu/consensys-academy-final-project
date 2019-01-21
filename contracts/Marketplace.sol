@@ -44,6 +44,7 @@ contract Marketplace is Ownable {
     event StoreRemoved(address seller, bytes32 storeId);
     event ItemCreated(address seller, bytes32 storeId, uint sku, string name, uint price, uint availableAmount);
     event ItemRemoved(address seller, bytes32 storeId, uint sku);
+    event ItemEdited(address seller, bytes32 storeId, uint sku, string name, uint price, uint availableAmount);
 
     /* Roles modifiers */
     modifier isAdmin () { require (privilegedUsers[msg.sender] && roles[msg.sender] == Roles.ADMIN); _;}
@@ -162,6 +163,21 @@ contract Marketplace is Ownable {
         store.skus.push(sku);
 
         emit ItemCreated(msg.sender, store.storeId, sku, name, price, availableAmount);
+    }
+
+    function editItem(bytes32 storeId, uint sku, string memory name, uint price, uint availableAmount)
+        public
+        isSeller
+        isItemSeller(storeId, sku) {
+        Store storage store = empires[msg.sender].stores[storeId];
+
+        // TODO Check integer overflows (more in the buy operation)
+        require(price > 0, 'Price must be a positive number');
+        require(availableAmount > 0, 'Available amount must be a positive number');
+
+        store.items[sku] = Item({ sku: sku, name: name, price: price, availableAmount: availableAmount });
+
+        emit ItemEdited(msg.sender, store.storeId, sku, name, price, availableAmount);
     }
 
     function getNumberOfItems(address seller, bytes32 storeId) public view returns(uint) {

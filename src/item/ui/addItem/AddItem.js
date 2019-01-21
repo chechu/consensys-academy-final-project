@@ -19,10 +19,14 @@ class AddItem extends React.Component {
                 <Modal.Header>Add a new item to your store</Modal.Header>
                 <Modal.Content>
                     <Form onSubmit={(event) => { this.onAddItemClick(event, this.state, this.close)}}>
-                        <Form.Input required name="sku" label='SKU' type="number" onChange={this.handleChange} />
-                        <Form.Input required name="name" label='Name' onChange={this.handleChange} />
-                        <Form.Input required name="price" label='Price' type="number" onChange={this.handleChange} />
-                        <Form.Input required name="availableAmount" label='Amount' type="number" onChange={this.handleChange} />
+                        <Form.Group widths='equal'>
+                            <Form.Input fluid required name="sku" label='SKU' type="number" onChange={this.handleChange} />
+                            <Form.Input fluid required name="name" label='Name' onChange={this.handleChange} />
+                        </Form.Group>
+                        <Form.Group widths='equal'>
+                            <Form.Input fluid required name="price" label='Price' type="number" onChange={this.handleChange} />
+                            <Form.Input fluid required name="availableAmount" label='Amount' type="number" onChange={this.handleChange} />
+                        </Form.Group>
                         <Modal.Actions>
                             <Button onClick={this.close} negative>Cancel</Button>
                             <Button positive
