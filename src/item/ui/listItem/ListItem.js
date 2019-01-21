@@ -1,54 +1,31 @@
 import React from 'react';
-import { Card, Button, Divider, Header, Icon } from 'semantic-ui-react';
+import { Card, Divider, Header, Icon } from 'semantic-ui-react';
+import ItemContainer from '../item/ItemContainer';
 
 class ListItem extends React.Component {
     constructor(props) {
         super(props);
-        this.isOwner = (this.props.sellerAddress === this.props.authUserAddress);
+        this.isOwner = (this.props._store.sellerAddress === this.props.authUserAddress);
     }
 
     async componentDidMount() {
-        this.props.loadStore(this.props.sellerAddress, this.props.storeId);
-    }
-
-    getStoreItems(item) {
-        return (
-            <Card key={item.sku}>
-                <Card.Content>
-                    <Card.Header>{item.name}</Card.Header>
-                    <Card.Meta>Friends of Elliot</Card.Meta>
-                    <Card.Description>
-                        Steve wants to add you to the group <strong>best friends</strong>
-                    </Card.Description>
-                </Card.Content>
-                <Card.Content extra>
-                    <div className='ui two buttons'>
-                        <Button basic color='green'>
-                            Approve
-                        </Button>
-                        <Button basic color='red'>
-                            Decline
-                        </Button>
-                    </div>
-                </Card.Content>
-            </Card>
-        )
+        this.props.loadStore(this.props._store.sellerAddress, this.props._store.storeId);
     }
 
     render() {
         const items = [];
-        if (this.props.store.items) {
-            this.props.store.items.forEach((item) => {
-                items.push(this.getStoreItems(item));
+        if (this.props._store.items) {
+            this.props._store.items.forEach((item) => {
+                items.push(<ItemContainer key={item.sku} item={item} />);
             });
         }
 
         return (
-            <span key={this.props.store.name}>
+            <span key={this.props._store.name}>
                 <Divider horizontal>
                     <Header as='h4'>
                         <Icon name='gift' />
-                        Items of store: {this.props.store.name}
+                        Items of store: {this.props._store.name}
                     </Header>
                 </Divider>
                 { items && <Card.Group>{items}</Card.Group> }

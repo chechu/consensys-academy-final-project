@@ -32,7 +32,7 @@ export async function getStoreIds(sellerAddress) {
 
 export async function getStoreMetadata(sellerAddress, storeId) {
     const storeMetadata = await contract.methods.getStoreMetadata(sellerAddress, storeId).call();
-    return { name: storeMetadata[0], numItems: storeMetadata[1], storeId };
+    return { name: storeMetadata[0], numItems: storeMetadata[1], items:[], storeId, sellerAddress };
 }
 
 export async function getStoresMetadataBySeller(sellerAddress) {
@@ -62,7 +62,7 @@ export async function getSkus(sellerAddress, storeId) {
 
 export async function getItemMetadata(sellerAddress, storeId, sku) {
     const itemMetadata = await contract.methods.getItemMetadata(sellerAddress, storeId, sku).call();
-    return { name: itemMetadata[0], price: itemMetadata[1], availableAmmount: itemMetadata[2], sku };
+    return { name: itemMetadata[0], price: itemMetadata[1], availableAmmount: itemMetadata[2], sku, sellerAddress, storeId };
 }
 
 export async function getItemsMetadata(sellerAddress, storeId) {

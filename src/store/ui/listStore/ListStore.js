@@ -17,7 +17,7 @@ class ListStore extends React.Component {
         let items;
         if (this.props.stores && this.props.stores[sellerAddress]) {
             items = this.props.stores[sellerAddress].stores.map(storeMetadata =>
-                <StoreSummaryContainer key={storeMetadata.name} sellerAddress={sellerAddress} storeId={storeMetadata.storeId} />
+                <StoreSummaryContainer key={storeMetadata.name} _store={storeMetadata} />
             );
         }
 

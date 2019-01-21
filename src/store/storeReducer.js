@@ -1,5 +1,5 @@
 import produce from 'immer';
-import { STORE_ADDED, PULL_STORES, PULL_STORE } from '../util/actions';
+import { STORE_ADDED, PULL_STORES, PULL_STORE, PULL_ITEMS } from '../util/actions';
 
 const initialState = {
     storesBySeller: { }, // A map with sellerAddress: { stores: [StoreMetadata] }
@@ -19,7 +19,18 @@ const storeReducer = (state = initialState, action) => {
         return pullStoreMetadata(state, action.sellerAddress, action.store);
     }
 
+    if (action.type === PULL_ITEMS) {
+        return pullItems(state, action.store, action.items);
+    }
+
     return state
+}
+
+function pullItems(state, store, items) {
+    return produce(state, (draftState) => {
+        const storeToUpdate = draftState.storesBySeller[store.sellerAddress].stores.find(it => it.storeId === store.storeId);
+        storeToUpdate.items = items;
+    });
 }
 
 function pullStoreMetadata(state, sellerAddress, store) {

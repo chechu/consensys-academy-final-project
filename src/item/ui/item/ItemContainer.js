@@ -1,24 +1,23 @@
 import { connect } from 'react-redux';
-import ListItem from './ListItem';
+import Item from './Item';
 import { pullItems } from '../../../util/actions';
 
 const mapStateToProps = (state, ownProps) => {
-    return {
-        authUserAddress: state.user.data && state.user.data.address,
-    }
+    const authUserAddress = state.user.data && state.user.data.address;
+    return { authUserAddress };
 }
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        loadStore: (sellerAddress, storeId) => {
+        loadItem: (sellerAddress, storeId, sku) => {
             dispatch(pullItems(sellerAddress, storeId))
         }
     }
 }
 
-const ListItemContainer = connect(
+const ItemContainer = connect(
     mapStateToProps,
     mapDispatchToProps
-)(ListItem)
+)(Item)
 
-export default ListItemContainer
+export default ItemContainer

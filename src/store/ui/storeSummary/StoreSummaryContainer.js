@@ -5,8 +5,6 @@ import { pullStore } from '../../../util/actions';
 const mapStateToProps = (state, ownProps) => {
     return {
         authUserAddress: state.user.data && state.user.data.address,
-        store: state.store.storesBySeller[ownProps.sellerAddress]
-            && state.store.storesBySeller[ownProps.sellerAddress].stores.find(it => it.storeId === ownProps.storeId),
     }
 }
 

@@ -14,7 +14,7 @@ const mapStateToProps = (state, ownProps) => {
 const mapDispatchToProps = (dispatch) => {
     return {
         loadStore: (sellerAddress, storeId) => {
-            dispatch(pullStore(sellerAddress, storeId))
+            dispatch(pullStore(sellerAddress, storeId));
         }
     }
 }

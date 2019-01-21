@@ -12,6 +12,32 @@ export const ITEM_ADDED = 'ITEM_ADDED';
 export const STORE_ADDED = 'STORE_ADDED';
 export const PULL_STORES = 'PULL_STORES';
 export const PULL_STORE = 'PULL_STORE';
+export const PULL_ITEMS = 'PULL_ITEMS';
+
+/* Actions */
+
+function itemsMustBeUpdated(store, forceFetch) {
+    return store && ((store.numItems > 0 && !store.items.length) || forceFetch);
+}
+export function pullItems(sellerAddress, storeId, forceFetch) {
+    return function(dispatch, getState) {
+        sellerAddress = sellerAddress.toUpperCase();
+
+        const store = getState().store.storesBySeller[sellerAddress]
+            && getState().store.storesBySeller[sellerAddress].stores.find(it => it.storeId === storeId);
+
+        if(itemsMustBeUpdated(store, forceFetch)) {
+            contract.getItemsMetadata(sellerAddress, storeId)
+                .then((items) => {
+                    dispatch({
+                        type: PULL_ITEMS,
+                        store,
+                        items,
+                    })
+                });
+        }
+    }
+}
 
 export function pullStore(sellerAddress, storeId, forceFetch) {
     return function(dispatch, getState) {
@@ -21,16 +47,13 @@ export function pullStore(sellerAddress, storeId, forceFetch) {
             && getState().store.storesBySeller[sellerAddress].stores.find(it => it.storeId === storeId);
 
         if (!newStoresMetadata || forceFetch) {
-            const storeMetada = contract.getStoreMetadata(sellerAddress, storeId);
-            const itemsMetada = contract.getItemsMetadata(sellerAddress, storeId);
-            Promise.all([storeMetada, itemsMetada]).then(([store, items]) => {
-                store.items = items;
+            contract.getStoreMetadata(sellerAddress, storeId).then(store => {
                 dispatch({
                     type: PULL_STORE,
                     sellerAddress,
                     store,
-                })
-            })
+                });
+            });
         }
     }
 }
