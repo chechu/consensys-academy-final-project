@@ -6,11 +6,11 @@ import AddItemContainer from '../../../item/ui/addItem/AddItemContainer';
 class StoreSummary extends React.Component {
     constructor(props) {
         super(props);
-        this.isOwner = (this.props.sellerAddress === this.props.authUserAddress);
+        this.isOwner = (this.props._store.sellerAddress === this.props.authUserAddress);
     }
 
     async componentDidMount() {
-        this.props.loadStore(this.props.sellerAddress, this.props.storeId);
+        this.props.loadStore(this.props._store.sellerAddress, this.props._store.storeId);
     }
 
     render() {
@@ -21,16 +21,16 @@ class StoreSummary extends React.Component {
                 <Item.Content>
 
                     <Item.Header>
-                        <Link to={`/store/${this.props.sellerAddress}/${this.props.storeId}`}>
-                            {this.props.store.name}
+                        <Link to={`/store/${this.props._store.sellerAddress}/${this.props._store.storeId}`}>
+                            {this.props._store.name}
                         </Link>
                     </Item.Header>
                     <Item.Meta>
                         <span className='cinema'>Union Square 14</span>
                     </Item.Meta>
-                    <Item.Description>Number of items: {this.props.store.numItems}</Item.Description>
+                    <Item.Description>Number of items: {this.props._store.numItems}</Item.Description>
                     <Item.Extra>
-                        { this.isOwner && <AddItemContainer storeId={this.props.storeId} /> }
+                        { this.isOwner && <AddItemContainer storeId={this.props._store.storeId} pullAction={this.props.pullAction} /> }
                         <Label icon='globe' content='Additional Languages' />
                     </Item.Extra>
                 </Item.Content>

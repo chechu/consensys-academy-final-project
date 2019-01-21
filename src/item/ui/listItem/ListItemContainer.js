@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
-import StoreSummary from './StoreSummary';
-import { pullStore } from '../../../util/actions';
+import ListItem from './ListItem';
+import { pullItems } from '../../../util/actions';
 
 const mapStateToProps = (state, ownProps) => {
     return {
@@ -11,14 +11,14 @@ const mapStateToProps = (state, ownProps) => {
 const mapDispatchToProps = (dispatch) => {
     return {
         loadStore: (sellerAddress, storeId) => {
-            dispatch(pullStore(sellerAddress, storeId))
+            dispatch(pullItems(sellerAddress, storeId))
         }
     }
 }
 
-const StoreSummaryContainer = connect(
+const ListItemContainer = connect(
     mapStateToProps,
     mapDispatchToProps
-)(StoreSummary)
+)(ListItem)
 
-export default StoreSummaryContainer
+export default ListItemContainer
