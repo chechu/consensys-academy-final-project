@@ -12,6 +12,7 @@ contract Marketplace is Ownable {
 
     /* Stores owned by sellers */
     mapping(address => Empire) empires;
+    address[] sellers;
 
     /* Structs */
     struct Empire {
@@ -80,13 +81,43 @@ contract Marketplace is Ownable {
     function addSeller(address newSeller) public isAdmin isBuyer(newSeller) {
         roles[newSeller] = Roles.SELLER;
         privilegedUsers[newSeller] = true;
+        sellers.push(newSeller);
         emit SellerAdded(newSeller);
     }
 
     function removeSeller(address oldSeller) public isAdmin {
-        delete roles[oldSeller];
-        delete privilegedUsers[oldSeller];
-        emit SellerRemoved(oldSeller);
+        // Soft control, we don't require the existance of the seller...
+        if (privilegedUsers[oldSeller] && roles[oldSeller] == Roles.SELLER) {
+            uint sellerIndex = 0;
+
+            while(sellerIndex < sellers.length && sellers[sellerIndex] != oldSeller) {
+                sellerIndex++;
+            }
+
+            require(sellerIndex < sellers.length, 'seller not found in sellers list');
+
+            // Delete from the maps
+            delete roles[oldSeller];
+            delete privilegedUsers[oldSeller];
+
+            // Delete from array
+            // Removing and compacting an item in an array: https://github.com/su-squares/ethereum-contract/blob/master/contracts/SuNFT.sol#L296
+            if (sellers.length > 1 && sellerIndex != sellers.length - 1)        {
+                sellers[sellerIndex] = sellers[sellers.length - 1];
+            }
+            sellers.length--;
+
+            emit SellerRemoved(oldSeller);
+        }
+    }
+
+    function getNumberOfSellers() public view returns(uint) {
+        return sellers.length;
+    }
+
+    function getSellerAddress(uint sellerIndex) public view returns(address) {
+        require(sellerIndex >= 0 && sellerIndex < sellers.length);
+        return sellers[sellerIndex];
     }
 
     /* Managing stores */

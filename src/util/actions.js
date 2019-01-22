@@ -9,7 +9,6 @@ export const USER_LOGGED_IN = 'USER_LOGGED_IN';
 export const USER_LOGGED_OUT = 'USER_LOGGED_OUT'
 
 export const ITEM_ADDED = 'ITEM_ADDED';
-export const STORE_ADDED = 'STORE_ADDED';
 export const PULL_STORES = 'PULL_STORES';
 export const PULL_STORE = 'PULL_STORE';
 export const PULL_ITEMS = 'PULL_ITEMS';
@@ -64,5 +63,22 @@ export function pullStores(sellerAddresses, forceFetch) {
             .filter(sellerAddress => forceFetch || !getState().storesBySeller || !getState().storesBySeller[sellerAddress])
             .map(async sellerAddress => ({ sellerAddress, stores: await contract.getStoresMetadataBySeller(sellerAddress) }))
         ).then(newStoresMetadata => dispatch({ type: PULL_STORES, newStoresMetadata }));
+    }
+}
+
+export function pullEveryStore(forceFetch) {
+    return function(dispatch, getState) {
+        if (forceFetch || !getState().sellers) {
+            contract.getSellerAddresses()
+                .then(sellers => {
+                    sellers = sellers.map(it => it.toUpperCase());
+                    // We get the needed stores metadata
+                    return Promise.all(sellers
+                        .filter(sellerAddress => forceFetch || !getState().storesBySeller || !getState().storesBySeller[sellerAddress])
+                        .map(async sellerAddress => ({ sellerAddress, stores: await contract.getStoresMetadataBySeller(sellerAddress) }))
+                    );
+                })
+                .then(newStoresMetadata => dispatch({ type: PULL_STORES, newStoresMetadata }));
+        }
     }
 }

@@ -4,14 +4,12 @@ import StoreSummaryContainer from '../storeSummary/StoreSummaryContainer';
 import { pullStore } from '../../../util/actions';
 
 class ListStore extends React.Component {
-    getSellerAddresses() {
-        // TODO: Support of multi sellers
-        return [this.props.seller];
-    }
-
     async componentDidMount() {
-        const sellerAddresses = this.getSellerAddresses();
-        this.props.loadStores(sellerAddresses);
+        if (this.props.seller) {
+            this.props.loadStores([this.props.seller]);
+        } else {
+            this.props.loadEveryStore();
+        }
     }
 
     getStoreItems(sellerAddress) {

@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
 import ListStore from './ListStore';
-import { pullStores } from '../../../util/actions';
+import { pullStores, pullEveryStore } from '../../../util/actions';
 
 const mapStateToProps = (state, ownProps) => {
     return {
@@ -12,7 +12,10 @@ const mapDispatchToProps = (dispatch, ownProps) => {
     return {
         loadStores: (sellerAddresses) => {
             dispatch(pullStores(sellerAddresses));
-        }
+        },
+        loadEveryStore: () => {
+            dispatch(pullEveryStore());
+        },
     }
 }
 
