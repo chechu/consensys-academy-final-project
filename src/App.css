@@ -69,3 +69,19 @@ pre {
   height: 16px;
   margin-right: 10px;
 }
+
+/* Misc */
+.item.available {
+    cursor: pointer;
+    background-color: #21ba45 !important;
+    color: #ffffff !important;
+}
+
+.item.available:hover {
+    background-color: #16ab39 !important;
+}
+
+.item.unavailable {
+    color: rgb(0, 0, 0, 0.4);
+    cursor: default;
+}

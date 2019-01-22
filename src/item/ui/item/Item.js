@@ -13,7 +13,9 @@ class Item extends React.Component {
 
     render() {
         const web3 = getWeb3();
-        const allowToBuy = this.props.role.id === ROLES.BUYER;
+        const availability = this.props.item.availableAmount > 0;
+        const allowToBuy = (this.props.role.id === ROLES.BUYER) && availability;
+        const classNameAvailability = (availability ? 'available' : 'unavailable');
         return (
             <Card key={this.props.item.sku}>
                 <Image src='https://react.semantic-ui.com/images/avatar/large/matthew.png' />
@@ -26,13 +28,13 @@ class Item extends React.Component {
                 </Card.Content>
                 <Card.Content extra>
                     <Menu compact icon='labeled'>
-                        <Menu.Item name='amount' active={false}>
+                        <Menu.Item name='amount'>
                             <Icon name='archive' />
                             <Popup position='top center'
                                 trigger={<span>{this.props.item.availableAmount}</span>}
                                 content={<span>Availability: {this.props.item.availableAmount} items</span>}/>
                         </Menu.Item>
-                        <Menu.Item name='price' active={false}>
+                        <Menu.Item name='price'>
                             <Icon name='money bill alternate outline' />
                             <Popup position='top center' trigger={<span>{web3.utils.fromWei(this.props.item.price, 'finney')} F</span>}>
                                 <Popup.Header>Price in Finney</Popup.Header>
@@ -45,7 +47,7 @@ class Item extends React.Component {
                                 </Popup.Content>
                             </Popup>
                         </Menu.Item>
-                        <Menu.Item disabled={!allowToBuy} onClick='TODO!' name='buy' active={false}>
+                        <Menu.Item className={classNameAvailability} as='div' disabled={!allowToBuy} onClick='TODO!' name='buy'>
                             <Icon name='shop' />
                             Buy
                         </Menu.Item>

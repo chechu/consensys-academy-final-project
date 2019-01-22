@@ -1,16 +1,11 @@
 import produce from 'immer';
-import { STORE_ADDED, PULL_STORES, PULL_STORE, PULL_ITEMS } from '../util/actions';
+import { PULL_STORES, PULL_STORE, PULL_ITEMS } from '../util/actions';
 
 const initialState = {
     storesBySeller: { }, // A map with sellerAddress: { stores: [StoreMetadata] }
-}
+};
 
 const storeReducer = (state = initialState, action) => {
-    if (action.type === STORE_ADDED) {
-        // TODO: pull stores
-        console.log('Store added: ', action.receipt);
-    }
-
     if (action.type === PULL_STORES) {
         return pullStoresMetadata(state, action.newStoresMetadata);
     }
@@ -59,7 +54,7 @@ function pullStoresMetadata(state, newStoresMetadata) {
         newStoresMetadata.forEach((tuple) => {
             draftState.storesBySeller[tuple.sellerAddress] = { stores: [] };
             tuple.stores.forEach(it => draftState.storesBySeller[tuple.sellerAddress].stores.push(it));
-        })
+        });
     });
 }
 

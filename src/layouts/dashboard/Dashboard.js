@@ -15,6 +15,9 @@ class Dashboard extends Component {
         const ListSellerStores = VisibleOnlyAuthorized(() =>
             <ListStoreContainer seller={this.props.authData.address} />
         )
+        const ListBuyerStores = VisibleOnlyAuthorized(() =>
+            <ListStoreContainer />
+        )
 
         return(
             <main className="container">
@@ -24,6 +27,7 @@ class Dashboard extends Component {
                         <AddSellerForm authorizedRoles={['ADMIN']}/>
                         <AddStoreForm authorizedRoles={['SELLER']}/>
                         <ListSellerStores authorizedRoles={['SELLER']}/>
+                        <ListBuyerStores authorizedRoles={['BUYER']} />
                     </div>
                 </div>
             </main>
