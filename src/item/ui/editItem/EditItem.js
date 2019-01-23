@@ -1,5 +1,5 @@
 import React from 'react';
-import { Modal, Button, Form, Icon } from 'semantic-ui-react';
+import { Modal, Button, Form, Icon, Input } from 'semantic-ui-react';
 
 class EditItem extends React.Component {
 
@@ -24,7 +24,13 @@ class EditItem extends React.Component {
                             <Form.Input fluid required value={this.state.name} name="name" label='Name' onChange={this.handleChange} />
                         </Form.Group>
                         <Form.Group widths='equal'>
-                            <Form.Input fluid required value={this.state.price} name="price" label='Price' type="number" onChange={this.handleChange} />
+                            <Form.Field required>
+                                <label>Price</label>
+                                <Input type='number' fluid required
+                                    value={this.state.price}
+                                    label={{ basic: true, content: 'Wei' }} labelPosition='right'
+                                    name='price' onChange={this.handleChange} />
+                            </Form.Field>
                             <Form.Input fluid required value={this.state.availableNumItems} name="availableNumItems" label='Amount' type="number" onChange={this.handleChange} />
                         </Form.Group>
                         <Modal.Actions>

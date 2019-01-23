@@ -6,6 +6,7 @@ const mapStateToProps = (state, ownProps) => {
         address: state.user.data.address,
         roleName: state.user.data.role.name,
         balance: state.user.balance,
+        pendingFunds: state.user.pendingFunds,
     }
 }
 

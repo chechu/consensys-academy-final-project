@@ -1,8 +1,9 @@
-import { USER_BALANCE_UPDATED, USER_LOGGED_IN, USER_LOGGED_OUT } from '../util/actions';
+import { USER_BALANCE_UPDATED, USER_LOGGED_IN, USER_LOGGED_OUT, USER_PENDING_FUNDS_UPDATED } from '../util/actions';
 
 const initialState = {
     data: null,
     balance: null,
+    pendingFunds: null,
 };
 
 const userReducer = (state = initialState, action) => {
@@ -21,6 +22,12 @@ const userReducer = (state = initialState, action) => {
     if (action.type === USER_BALANCE_UPDATED) {
         return Object.assign({}, state, {
             balance: action.newBalance,
+        });
+    }
+
+    if (action.type === USER_PENDING_FUNDS_UPDATED) {
+        return Object.assign({}, state, {
+            pendingFunds: action.pendingFunds,
         });
     }
 

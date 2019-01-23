@@ -1,7 +1,7 @@
 import { initUport, initBrowserProvider, getWeb3 } from './../../../util/connectors.js';
 import { browserHistory } from 'react-router';
 import { initContract, contract, ROLES } from '../../../util/contracts/marketplace';
-import { USER_LOGGED_IN, USER_BALANCE_UPDATED } from '../../../util/actions';
+import { USER_LOGGED_IN, USER_BALANCE_UPDATED, USER_PENDING_FUNDS_UPDATED } from '../../../util/actions';
 
 function userLoggedIn(user) {
     return {
@@ -21,20 +21,25 @@ function redirectAfterLogin() {
     return browserHistory.push('/dashboard');
 }
 
-function getRole(dispatch, address) {
+async function getUserData(dispatch, address) {
     initContract(address);
-    return contract.methods.getRole().call().then(role => {
-        const roleName = ROLES.getRoleName(role);
-        dispatch(userLoggedIn({ address, role: { name: roleName, id: role } }));
-        return address;
-    });
-}
 
-function getBalance(dispatch, address) {
-    return getWeb3().eth.getBalance(address).then(newBalance => {
-        dispatch({ type: USER_BALANCE_UPDATED, newBalance });
-        return redirectAfterLogin()
-    });
+    // Role info
+    const role = await contract.methods.getRole().call();
+    const roleName = ROLES.getRoleName(role);
+    dispatch(userLoggedIn({ address, role: { name: roleName, id: role } }));
+
+    // New balance info
+    const newBalance = await getWeb3().eth.getBalance(address);
+    dispatch({ type: USER_BALANCE_UPDATED, newBalance });
+
+    // Pending funds
+    if (role === ROLES.SELLER) {
+        const pendingFunds = await contract.methods.getPendingFunds().call();
+        dispatch({ type: USER_PENDING_FUNDS_UPDATED, pendingFunds });
+    }
+
+    return redirectAfterLogin();
 }
 
 function browserProviderLogin() {
@@ -53,8 +58,7 @@ function browserProviderLogin() {
                 }
             });
             return getAddress
-                .then(getRole.bind(this, dispatch))
-                .then(getBalance.bind(this, dispatch));
+                .then(getUserData.bind(this, dispatch));
         });
     }
 }
@@ -82,8 +86,7 @@ function uportLogin() {
         }
     });
     return getAddress
-        .then(getRole.bind(this, dispatch))
-        .then(getBalance.bind(this, dispatch));
+        .then(getUserData.bind(this, dispatch));
   }
 }
 

@@ -14,6 +14,8 @@ export const PULL_STORES = 'PULL_STORES';
 export const PULL_STORE = 'PULL_STORE';
 export const PULL_ITEMS = 'PULL_ITEMS';
 
+export const USER_PENDING_FUNDS_UPDATED = 'USER_PENDING_FUNDS_UPDATED';
+
 /* Actions */
 
 function itemsMustBeUpdated(store, forceFetch) {
