@@ -52,15 +52,16 @@ contract Marketplace is Ownable {
     event ItemPurchased(address seller, bytes32 storeId, uint sku, uint numPurchasedItems, uint newAvailableNumItems);
 
     /* Roles modifiers */
-    modifier isAdmin () { require (privilegedUsers[msg.sender] && roles[msg.sender] == Roles.ADMIN); _;}
-    modifier isSeller () { require (privilegedUsers[msg.sender] && roles[msg.sender] == Roles.SELLER); _;}
-    modifier isBuyer (address _address) { require (!privilegedUsers[_address]); _;}
+    modifier isAdmin () { require (privilegedUsers[msg.sender] && roles[msg.sender] == Roles.ADMIN, 'User must have the ADMIN role'); _;}
+    modifier isSeller () { require (privilegedUsers[msg.sender] && roles[msg.sender] == Roles.SELLER, 'User must have the SELLER role'); _;}
+    modifier isBuyer (address _address) { require (!privilegedUsers[_address], 'User must be a buyer'); _;}
 
     /* Ownership modifiers */
-    modifier isSellerOwner (bytes32 storeId) { require(empires[msg.sender].stores[storeId].storeId != 0); _; }
+    modifier isSellerOwner (bytes32 storeId) { require(empires[msg.sender].stores[storeId].storeId != 0, 'User must be the owner of the store'); _; }
     modifier isItemSeller (bytes32 storeId, uint sku) {
-        require (empires[msg.sender].stores[storeId].storeId != 0);
-        require (empires[msg.sender].stores[storeId].items[sku].sku != 0);
+        require (
+            empires[msg.sender].stores[storeId].storeId != 0
+            && empires[msg.sender].stores[storeId].items[sku].sku != 0, 'User must be the owner of store where the item is sold');
         _;
     }
 
@@ -98,7 +99,7 @@ contract Marketplace is Ownable {
                 sellerIndex++;
             }
 
-            require(sellerIndex < sellers.length, 'seller not found in sellers list');
+            require(sellerIndex < sellers.length, 'Seller not found in the list of sellers');
 
             // Delete from the maps
             delete roles[oldSeller];
@@ -120,14 +121,14 @@ contract Marketplace is Ownable {
     }
 
     function getSellerAddress(uint sellerIndex) public view returns(address) {
-        require(sellerIndex >= 0 && sellerIndex < sellers.length);
+        require(sellerIndex >= 0 && sellerIndex < sellers.length, 'Out of bound index');
         return sellers[sellerIndex];
     }
 
     /* Managing stores */
 
     function addStore(string memory name) public isSeller {
-        require(bytes(name).length > 0, 'The name of the store cannot be empty');
+        require(bytes(name).length > 0, 'The name of the store must not be empty');
 
         bytes32 storeId = keccak256(abi.encodePacked(msg.sender, name));
         require(empires[msg.sender].stores[storeId].storeId == 0, 'The seller must not have two stores with the same name');
@@ -244,7 +245,7 @@ contract Marketplace is Ownable {
             skuIndex++;
         }
 
-        require(skuIndex < store.skus.length, 'sku not found in item list');
+        require(skuIndex < store.skus.length, 'SKU not found in item list');
 
         // Delete from map
         delete store.items[sku];
@@ -268,15 +269,15 @@ contract Marketplace is Ownable {
         Store storage store = empires[seller].stores[storeId];
 
         // The item must exist
-        require (store.storeId != 0);
-        require (store.items[sku].sku != 0);
+        require (store.storeId != 0, 'Store must exist');
+        require (store.items[sku].sku != 0, 'Item must be in the store');
 
         Item storage item = store.items[sku];
         // There must be enough number of items, and at least 1
-        require (numPurchasedItems > 0 && item.availableNumItems >= numPurchasedItems);
+        require (numPurchasedItems > 0 && item.availableNumItems >= numPurchasedItems, 'Invalid number of items to purchase');
 
         // Sent value must be, exactly, equals to the price * numPurchasedItems
-        require (msg.value == item.price * numPurchasedItems);
+        require (msg.value == item.price * numPurchasedItems, 'Invalid value in the message');
 
         // Updating the storage
         item.availableNumItems -= numPurchasedItems;
