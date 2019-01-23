@@ -1,7 +1,7 @@
-import { initUport, initBrowserProvider } from './../../../util/connectors.js';
+import { initUport, initBrowserProvider, getWeb3 } from './../../../util/connectors.js';
 import { browserHistory } from 'react-router';
 import { initContract, contract, ROLES } from '../../../util/contracts/marketplace';
-import { USER_LOGGED_IN } from '../../../util/actions';
+import { USER_LOGGED_IN, USER_BALANCE_UPDATED } from '../../../util/actions';
 
 function userLoggedIn(user) {
     return {
@@ -26,7 +26,14 @@ function getRole(dispatch, address) {
     return contract.methods.getRole().call().then(role => {
         const roleName = ROLES.getRoleName(role);
         dispatch(userLoggedIn({ address, role: { name: roleName, id: role } }));
-        return redirectAfterLogin();
+        return address;
+    });
+}
+
+function getBalance(dispatch, address) {
+    return getWeb3().eth.getBalance(address).then(newBalance => {
+        dispatch({ type: USER_BALANCE_UPDATED, newBalance });
+        return redirectAfterLogin()
     });
 }
 
@@ -45,7 +52,9 @@ function browserProviderLogin() {
                     });
                 }
             });
-            return getAddress.then(getRole.bind(this, dispatch));
+            return getAddress
+                .then(getRole.bind(this, dispatch))
+                .then(getBalance.bind(this, dispatch));
         });
     }
 }
@@ -72,7 +81,9 @@ function uportLogin() {
             });
         }
     });
-    return getAddress.then(getRole.bind(this, dispatch));
+    return getAddress
+        .then(getRole.bind(this, dispatch))
+        .then(getBalance.bind(this, dispatch));
   }
 }
 

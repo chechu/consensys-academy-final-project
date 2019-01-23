@@ -7,6 +7,7 @@ export const CONFIRMED_TX = 'CONFIRMED_TX';
 
 export const USER_LOGGED_IN = 'USER_LOGGED_IN';
 export const USER_LOGGED_OUT = 'USER_LOGGED_OUT'
+export const USER_BALANCE_UPDATED = 'USER_BALANCE_UPDATED';
 
 export const ITEM_ADDED = 'ITEM_ADDED';
 export const PULL_STORES = 'PULL_STORES';

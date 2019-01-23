@@ -2,8 +2,8 @@ import React from 'react';
 import { Card, Icon, Popup, Image, Menu, Button } from 'semantic-ui-react';
 import RemoveItemContainer from '../removeItem/RemoveItemContainer';
 import EditItemContainer from '../editItem/EditItemContainer';
+import CheckoutItemContainer from '../checkoutItem/CheckoutItemContainer';
 import { getWeb3 } from '../../../util/connectors';
-import { ROLES } from '../../../util/contracts/marketplace';
 
 class Item extends React.Component {
     constructor(props) {
@@ -13,9 +13,6 @@ class Item extends React.Component {
 
     render() {
         const web3 = getWeb3();
-        const availability = this.props.item.availableAmount > 0;
-        const allowToBuy = (this.props.role.id === ROLES.BUYER) && availability;
-        const classNameAvailability = (availability ? 'available' : 'unavailable');
         return (
             <Card key={this.props.item.sku}>
                 <Image src='https://react.semantic-ui.com/images/avatar/large/matthew.png' />
@@ -31,8 +28,8 @@ class Item extends React.Component {
                         <Menu.Item name='amount'>
                             <Icon name='archive' />
                             <Popup position='top center'
-                                trigger={<span>{this.props.item.availableAmount}</span>}
-                                content={<span>Availability: {this.props.item.availableAmount} items</span>}/>
+                                trigger={<span>{this.props.item.availableNumItems}</span>}
+                                content={<span>Availability: {this.props.item.availableNumItems} items</span>}/>
                         </Menu.Item>
                         <Menu.Item name='price'>
                             <Icon name='money bill alternate outline' />
@@ -47,10 +44,7 @@ class Item extends React.Component {
                                 </Popup.Content>
                             </Popup>
                         </Menu.Item>
-                        <Menu.Item className={classNameAvailability} as='div' disabled={!allowToBuy} onClick='TODO!' name='buy'>
-                            <Icon name='shop' />
-                            Buy
-                        </Menu.Item>
+                        <CheckoutItemContainer item={this.props.item} role={this.props.role} />
                     </Menu>
                 </Card.Content>
                 { this.isOwner &&

@@ -15,9 +15,8 @@ export function editItem(itemProps) {
         web3.utils.toBN(itemProps.sku),
         itemProps.name,
         web3.utils.toBN(itemProps.price),
-        web3.utils.toBN(itemProps.availableAmount)
+        web3.utils.toBN(itemProps.availableNumItems)
     ];
-    console.log({editItemParams});
     return function(dispatch) {
         contract.methods.editItem(...editItemParams)
             .send()

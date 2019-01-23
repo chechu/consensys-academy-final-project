@@ -1,7 +1,7 @@
 import { getWeb3, DEFAULT_GAS_PRICE } from '../connectors'
 
 const abi = require('./abi/Marketplace.json').abi;
-const CONTRACT_ADDRESS = '0x00A7EEfb7940b76a170d7ecE9De7e6eD364C1ddA';
+const CONTRACT_ADDRESS = '0xB64995873CF7Ca28bf0E129c7C0F34467720bfcF';
 
 export let contract;
 
@@ -61,7 +61,7 @@ export async function getSkus(sellerAddress, storeId) {
 
 export async function getItemMetadata(sellerAddress, storeId, sku) {
     const itemMetadata = await contract.methods.getItemMetadata(sellerAddress, storeId, sku).call();
-    return { name: itemMetadata[0], price: itemMetadata[1], availableAmount: itemMetadata[2], sku, sellerAddress, storeId };
+    return { name: itemMetadata[0], price: itemMetadata[1], availableNumItems: itemMetadata[2], sku, sellerAddress, storeId };
 }
 
 export async function getItemsMetadata(sellerAddress, storeId) {
