@@ -3,6 +3,7 @@ let owner, admin, seller, buyer, secondarySeller, secondaryBuyer;
 const setAccounts = (accounts) => {
     [owner, admin, seller, buyer, secondarySeller, secondaryBuyer] = accounts;
 }
+
 const resetAccountRoles = async (marketplaceInstance) => {
     await marketplaceInstance.addAdmin(admin, {from: owner});
 
@@ -24,8 +25,15 @@ const resetStores = async (marketplaceInstance) => {
     }
 }
 
+const ROLES = {
+    ADMIN: 0,
+    SELLER: 1,
+    BUYER: 2,
+}
+
 module.exports = {
     setAccounts,
     resetAccountRoles,
     resetStores,
+    ROLES,
 }
