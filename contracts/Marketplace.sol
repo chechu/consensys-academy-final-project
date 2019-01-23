@@ -15,7 +15,7 @@ contract Marketplace is Ownable {
     address[] sellers;
 
     /* Payments */
-    mapping (address => uint) pendingWithdrawals;
+    mapping (address => uint) pendingFunds;
 
     /* Structs */
     struct Empire {
@@ -280,14 +280,18 @@ contract Marketplace is Ownable {
 
         // Updating the storage
         item.availableNumItems -= numPurchasedItems;
-        pendingWithdrawals[seller] += msg.value;
+        pendingFunds[seller] += msg.value;
 
         emit ItemPurchased(seller, store.storeId, item.sku, numPurchasedItems, item.availableNumItems);
     }
 
     function withdraw() public isSeller {
-        uint amount = pendingWithdrawals[msg.sender];
-        pendingWithdrawals[msg.sender] = 0;
+        uint amount = pendingFunds[msg.sender];
+        pendingFunds[msg.sender] = 0;
         msg.sender.transfer(amount);
+    }
+
+    function getPendingFunds() public view isSeller returns(uint) {
+        return pendingFunds[msg.sender];
     }
 }

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import AddSellerContainer from '../../user/ui/addSellerForm/AddSellerContainer';
 import AddStoreContainer from '../../store/ui/addStoreForm/AddStoreContainer';
 import ListStoreContainer from '../../store/ui/listStore/ListStoreContainer';
-import { VisibleOnlyAuthorized } from '../../util/wrappers.js';
+import { VisibleOnlyAuthorized } from '../../util/wrappers';
 
 class Dashboard extends Component {
     render() {

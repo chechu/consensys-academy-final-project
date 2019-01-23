@@ -27,7 +27,7 @@ class AddItem extends React.Component {
                             <Form.Field required>
                                 <label>Price</label>
                                 <Input type='number' fluid required
-                                    label={{ basic: true, content: 'Finney' }} labelPosition='right'
+                                    label={{ basic: true, content: 'Wei' }} labelPosition='right'
                                     name='price' onChange={this.handleChange} />
                             </Form.Field>
                             <Form.Input fluid required name='availableNumItems' label='Amount' type='number' onChange={this.handleChange} />
