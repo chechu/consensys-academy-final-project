@@ -25,6 +25,27 @@ const resetStores = async (marketplaceInstance) => {
     }
 }
 
+const purchaseItem = async (marketplaceInstance) => {
+    const storeName = `TestStore:purchaseItem:${Date.now()}`;
+    const item = { sku: 1, name: `TestItem:purchaseItem:${Date.now()}`, price: 1, availableNumItems: 10 };
+    await marketplaceInstance.addStore(storeName, { from: seller });
+    const storeId = await marketplaceInstance.getStoreId.call(seller, 0);
+    await marketplaceInstance.addItem(storeId, item.sku, item.name, item.price, item.availableNumItems, {from:seller});
+    const numItemsToPurchase = 1;
+    const valueToPay = numItemsToPurchase * item.price;
+    await marketplaceInstance.purchaseItem(seller, storeId, item.sku, numItemsToPurchase, { from: buyer, value: valueToPay});
+
+    return valueToPay;
+}
+
+async function getTransactionGasCost(tx, web3) {
+    const receipt = await web3.eth.getTransactionReceipt(tx);
+    const amount = receipt.gasUsed;
+    const transaction = await web3.eth.getTransaction(tx);
+    const price = transaction.gasPrice;
+    return new web3.utils.BN(price).mul(new web3.utils.BN(amount));
+}
+
 const ROLES = {
     ADMIN: 0,
     SELLER: 1,
@@ -35,5 +56,7 @@ module.exports = {
     setAccounts,
     resetAccountRoles,
     resetStores,
+    purchaseItem,
+    getTransactionGasCost,
     ROLES,
 }
