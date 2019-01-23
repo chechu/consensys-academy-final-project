@@ -1,5 +1,5 @@
 import React from 'react';
-import { Modal, Button, Form, Icon } from 'semantic-ui-react';
+import { Modal, Button, Form, Icon, Input } from 'semantic-ui-react';
 
 class AddItem extends React.Component {
 
@@ -15,17 +15,22 @@ class AddItem extends React.Component {
 
     render() {
         return(
-            <Modal open={this.state.open} trigger={<Button positive onClick={this.open}><Icon name='add circle'/>Add item</Button>}>
+            <Modal size='tiny' open={this.state.open} trigger={<Button positive onClick={this.open}><Icon name='add circle'/>Add item</Button>}>
                 <Modal.Header>Add a new item to your store</Modal.Header>
                 <Modal.Content>
                     <Form onSubmit={(event) => { this.onAddItemClick(event, this.state, this.close)}}>
                         <Form.Group widths='equal'>
-                            <Form.Input fluid required name="sku" label='SKU' type="number" onChange={this.handleChange} />
-                            <Form.Input fluid required name="name" label='Name' onChange={this.handleChange} />
+                            <Form.Input fluid required name='sku' label='SKU' type='number' onChange={this.handleChange} />
+                            <Form.Input fluid required name='name' label='Name' onChange={this.handleChange} />
                         </Form.Group>
                         <Form.Group widths='equal'>
-                            <Form.Input fluid required name="price" label='Price' type="number" onChange={this.handleChange} />
-                            <Form.Input fluid required name="availableAmount" label='Amount' type="number" onChange={this.handleChange} />
+                            <Form.Field required>
+                                <label>Price</label>
+                                <Input type='number' fluid required
+                                    label={{ basic: true, content: 'Finney' }} labelPosition='right'
+                                    name='price' onChange={this.handleChange} />
+                            </Form.Field>
+                            <Form.Input fluid required name='availableNumItems' label='Amount' type='number' onChange={this.handleChange} />
                         </Form.Group>
                         <Modal.Actions>
                             <Button onClick={this.close} negative>Cancel</Button>
@@ -33,7 +38,7 @@ class AddItem extends React.Component {
                                 labelPosition='right'
                                 icon='checkmark'
                                 content='Add item'
-                                type="submit" />
+                                type='submit' />
                         </Modal.Actions>
                     </Form>
                 </Modal.Content>

@@ -15,7 +15,7 @@ class EditItem extends React.Component {
 
     render() {
         return(
-            <Modal open={this.state.open} trigger={<Button basic onClick={this.open} color='blue'><Icon name='compose'/>Edit</Button>}>
+            <Modal size='tiny' open={this.state.open} trigger={<Button basic onClick={this.open} color='blue'><Icon name='compose'/>Edit</Button>}>
                 <Modal.Header>Edit item [{this.props.item.name}]</Modal.Header>
                 <Modal.Content>
                     <Form onSubmit={(event) => { this.onEditItemClick(event, this.state, this.close)}}>
@@ -25,7 +25,7 @@ class EditItem extends React.Component {
                         </Form.Group>
                         <Form.Group widths='equal'>
                             <Form.Input fluid required value={this.state.price} name="price" label='Price' type="number" onChange={this.handleChange} />
-                            <Form.Input fluid required value={this.state.availableAmount} name="availableAmount" label='Amount' type="number" onChange={this.handleChange} />
+                            <Form.Input fluid required value={this.state.availableNumItems} name="availableNumItems" label='Amount' type="number" onChange={this.handleChange} />
                         </Form.Group>
                         <Modal.Actions>
                             <Button onClick={this.close} negative>Cancel</Button>

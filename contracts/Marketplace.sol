@@ -14,6 +14,9 @@ contract Marketplace is Ownable {
     mapping(address => Empire) empires;
     address[] sellers;
 
+    /* Payments */
+    mapping (address => uint) pendingWithdrawals;
+
     /* Structs */
     struct Empire {
         mapping(bytes32 => Store) stores;
@@ -32,7 +35,7 @@ contract Marketplace is Ownable {
         uint sku;
         string name;
         uint price;
-        uint availableAmount;
+        uint availableNumItems;
     }
 
     /* Events */
@@ -43,9 +46,10 @@ contract Marketplace is Ownable {
 
     event StoreCreated(address seller, string name, bytes32 storeId);
     event StoreRemoved(address seller, bytes32 storeId);
-    event ItemCreated(address seller, bytes32 storeId, uint sku, string name, uint price, uint availableAmount);
+    event ItemCreated(address seller, bytes32 storeId, uint sku, string name, uint price, uint availableNumItems);
     event ItemRemoved(address seller, bytes32 storeId, uint sku);
-    event ItemEdited(address seller, bytes32 storeId, uint sku, string name, uint price, uint availableAmount);
+    event ItemEdited(address seller, bytes32 storeId, uint sku, string name, uint price, uint availableNumItems);
+    event ItemPurchased(address seller, bytes32 storeId, uint sku, uint numPurchasedItems, uint newAvailableNumItems);
 
     /* Roles modifiers */
     modifier isAdmin () { require (privilegedUsers[msg.sender] && roles[msg.sender] == Roles.ADMIN); _;}
@@ -177,7 +181,7 @@ contract Marketplace is Ownable {
 
     /* Managing items */
 
-    function addItem(bytes32 storeId, uint sku, string memory name, uint price, uint availableAmount)
+    function addItem(bytes32 storeId, uint sku, string memory name, uint price, uint availableNumItems)
         public
         isSeller
         isSellerOwner(storeId) {
@@ -188,15 +192,15 @@ contract Marketplace is Ownable {
 
         // TODO Check integer overflows (more in the buy operation)
         require(price > 0, 'Price must be a positive number');
-        require(availableAmount > 0, 'Available amount must be a positive number');
+        require(availableNumItems > 0, 'Available items must be a positive number');
 
-        store.items[sku] = Item({ sku: sku, name: name, price: price, availableAmount: availableAmount });
+        store.items[sku] = Item({ sku: sku, name: name, price: price, availableNumItems: availableNumItems });
         store.skus.push(sku);
 
-        emit ItemCreated(msg.sender, store.storeId, sku, name, price, availableAmount);
+        emit ItemCreated(msg.sender, store.storeId, sku, name, price, availableNumItems);
     }
 
-    function editItem(bytes32 storeId, uint sku, string memory name, uint price, uint availableAmount)
+    function editItem(bytes32 storeId, uint sku, string memory name, uint price, uint availableNumItems)
         public
         isSeller
         isItemSeller(storeId, sku) {
@@ -204,11 +208,11 @@ contract Marketplace is Ownable {
 
         // TODO Check integer overflows (more in the buy operation)
         require(price > 0, 'Price must be a positive number');
-        require(availableAmount > 0, 'Available amount must be a positive number');
+        require(availableNumItems > 0, 'Available items must be a positive number');
 
-        store.items[sku] = Item({ sku: sku, name: name, price: price, availableAmount: availableAmount });
+        store.items[sku] = Item({ sku: sku, name: name, price: price, availableNumItems: availableNumItems });
 
-        emit ItemEdited(msg.sender, store.storeId, sku, name, price, availableAmount);
+        emit ItemEdited(msg.sender, store.storeId, sku, name, price, availableNumItems);
     }
 
     function getNumberOfItems(address seller, bytes32 storeId) public view returns(uint) {
@@ -225,7 +229,7 @@ contract Marketplace is Ownable {
         view
         returns(string memory, uint, uint) {
         Item storage item = empires[seller].stores[storeId].items[sku];
-        return (item.name, item.price, item.availableAmount);
+        return (item.name, item.price, item.availableNumItems);
     }
 
     function removeItem(bytes32 storeId, uint sku)
@@ -255,5 +259,35 @@ contract Marketplace is Ownable {
         store.skus.length--;
 
         emit ItemRemoved(msg.sender, storeId, sku);
+    }
+
+    function purchaseItem(address seller, bytes32 storeId, uint sku, uint numPurchasedItems)
+        public
+        payable
+        isBuyer(msg.sender) {
+        Store storage store = empires[seller].stores[storeId];
+
+        // The item must exist
+        require (store.storeId != 0);
+        require (store.items[sku].sku != 0);
+
+        Item storage item = store.items[sku];
+        // There must be enough number of items, and at least 1
+        require (numPurchasedItems > 0 && item.availableNumItems >= numPurchasedItems);
+
+        // Sent value must be, exactly, equals to the price * numPurchasedItems
+        require (msg.value == item.price * numPurchasedItems);
+
+        // Updating the storage
+        item.availableNumItems -= numPurchasedItems;
+        pendingWithdrawals[seller] += msg.value;
+
+        emit ItemPurchased(seller, store.storeId, item.sku, numPurchasedItems, item.availableNumItems);
+    }
+
+    function withdraw() public isSeller {
+        uint amount = pendingWithdrawals[msg.sender];
+        pendingWithdrawals[msg.sender] = 0;
+        msg.sender.transfer(amount);
     }
 }

@@ -14,7 +14,7 @@ export function addItem(itemProps, pullAction) {
         web3.utils.toBN(itemProps.sku),
         itemProps.name,
         web3.utils.toBN(itemProps.price),
-        web3.utils.toBN(itemProps.availableAmount)
+        web3.utils.toBN(itemProps.availableNumItems)
     ];
     return function(dispatch) {
         contract.methods.addItem(...addItemsParams)
