@@ -193,7 +193,7 @@ contract Marketplace is Ownable {
 
         // TODO Check integer overflows (more in the buy operation)
         require(price > 0, 'Price must be a positive number');
-        require(availableNumItems > 0, 'Available items must be a positive number');
+        require(availableNumItems >= 0, 'Available items must be a positive number or zero');
 
         store.items[sku] = Item({ sku: sku, name: name, price: price, availableNumItems: availableNumItems });
         store.skus.push(sku);
@@ -209,7 +209,7 @@ contract Marketplace is Ownable {
 
         // TODO Check integer overflows (more in the buy operation)
         require(price > 0, 'Price must be a positive number');
-        require(availableNumItems > 0, 'Available items must be a positive number');
+        require(availableNumItems >= 0, 'Available items must be a positive number or zero');
 
         store.items[sku] = Item({ sku: sku, name: name, price: price, availableNumItems: availableNumItems });
 
