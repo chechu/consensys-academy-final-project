@@ -6,6 +6,9 @@ contract Marketplace is Ownable {
 
     enum Roles { ADMIN, SELLER, BUYER }
 
+    /* Circuit breaker */
+    bool private stopped = false;
+
     /* To know the role of a specific user */
     mapping(address => Roles) roles;
     mapping(address => bool) privilegedUsers;
@@ -65,6 +68,12 @@ contract Marketplace is Ownable {
         _;
     }
 
+    /* Circuit breaker */
+    modifier stopInEmergency { if (!stopped) _; }
+    function toggleContractActive() public onlyOwner {
+        stopped = !stopped;
+    }
+
     /* Managing permissions */
 
     function getRole() public view returns(Roles) {
@@ -90,7 +99,7 @@ contract Marketplace is Ownable {
         emit SellerAdded(newSeller);
     }
 
-    function removeSeller(address oldSeller) public isAdmin {
+    function removeSeller(address oldSeller) public stopInEmergency isAdmin {
         // Soft control, we don't require the existance of the seller...
         if (privilegedUsers[oldSeller] && roles[oldSeller] == Roles.SELLER) {
             uint sellerIndex = 0;
@@ -127,7 +136,7 @@ contract Marketplace is Ownable {
 
     /* Managing stores */
 
-    function addStore(string memory name) public isSeller {
+    function addStore(string memory name) public stopInEmergency isSeller  {
         require(bytes(name).length > 0, 'The name of the store must not be empty');
 
         bytes32 storeId = keccak256(abi.encodePacked(msg.sender, name));
@@ -140,7 +149,7 @@ contract Marketplace is Ownable {
         emit StoreCreated(msg.sender, name, storeId);
     }
 
-    function removeStore(bytes32 storeId, uint storeIndex) public isSeller isSellerOwner(storeId) {
+    function removeStore(bytes32 storeId, uint storeIndex) public stopInEmergency isSeller isSellerOwner(storeId) {
         // TODO - Taking into account this: https://solidity.readthedocs.io/en/develop/types.html#delete
         Empire storage empire = empires[msg.sender];
         Store storage store = empires[msg.sender].stores[storeId];
@@ -184,6 +193,7 @@ contract Marketplace is Ownable {
 
     function addItem(bytes32 storeId, uint sku, string memory name, uint price, uint availableNumItems)
         public
+        stopInEmergency
         isSeller
         isSellerOwner(storeId) {
         Store storage store = empires[msg.sender].stores[storeId];
@@ -203,6 +213,7 @@ contract Marketplace is Ownable {
 
     function editItem(bytes32 storeId, uint sku, string memory name, uint price, uint availableNumItems)
         public
+        stopInEmergency
         isSeller
         isItemSeller(storeId, sku) {
         Store storage store = empires[msg.sender].stores[storeId];
@@ -235,6 +246,7 @@ contract Marketplace is Ownable {
 
     function removeItem(bytes32 storeId, uint sku)
         public
+        stopInEmergency
         isSeller
         isItemSeller(storeId, sku) {
 
@@ -265,6 +277,7 @@ contract Marketplace is Ownable {
     function purchaseItem(address seller, bytes32 storeId, uint sku, uint numPurchasedItems)
         public
         payable
+        stopInEmergency
         isBuyer(msg.sender) {
         Store storage store = empires[seller].stores[storeId];
 

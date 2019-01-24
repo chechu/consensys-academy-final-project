@@ -25,7 +25,13 @@ async function getUserData(dispatch, address) {
     initContract(address);
 
     // Role info
-    const role = await contract.methods.getRole().call();
+    let role = await contract.methods.getRole().call();
+
+    // Is the owner?
+    const isOwner = await contract.methods.isOwner().call();
+    if (isOwner) {
+        role = ROLES.OWNER;
+    }
     const roleName = ROLES.getRoleName(role);
     dispatch(userLoggedIn({ address, role: { name: roleName, id: role } }));
 
