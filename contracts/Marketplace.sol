@@ -7,7 +7,7 @@ contract Marketplace is Ownable {
     enum Roles { ADMIN, SELLER, BUYER }
 
     /* Circuit breaker */
-    bool private stopped = false;
+    bool public stopped = false;
 
     /* To know the role of a specific user */
     mapping(address => Roles) roles;
@@ -80,19 +80,19 @@ contract Marketplace is Ownable {
         return privilegedUsers[msg.sender] ? roles[msg.sender] : Roles.BUYER;
     }
 
-    function addAdmin(address newAdmin) public onlyOwner {
+    function addAdmin(address newAdmin) public stopInEmergency onlyOwner {
         roles[newAdmin] = Roles.ADMIN;
         privilegedUsers[newAdmin] = true;
         emit AdminAdded(newAdmin);
     }
 
-    function removeAdmin(address oldAdmin) public onlyOwner {
+    function removeAdmin(address oldAdmin) public stopInEmergency onlyOwner {
         delete roles[oldAdmin];
         delete privilegedUsers[oldAdmin];
         emit AdminRemoved(oldAdmin);
     }
 
-    function addSeller(address newSeller) public isAdmin isBuyer(newSeller) {
+    function addSeller(address newSeller) public stopInEmergency isAdmin isBuyer(newSeller) {
         roles[newSeller] = Roles.SELLER;
         privilegedUsers[newSeller] = true;
         sellers.push(newSeller);

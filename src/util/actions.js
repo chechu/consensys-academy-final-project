@@ -15,6 +15,7 @@ export const PULL_STORE = 'PULL_STORE';
 export const PULL_ITEMS = 'PULL_ITEMS';
 
 export const USER_PENDING_FUNDS_UPDATED = 'USER_PENDING_FUNDS_UPDATED';
+export const IS_EMERGENCY_UPDATED = 'IS_EMERGENCY_UPDATED';
 
 /* Actions */
 

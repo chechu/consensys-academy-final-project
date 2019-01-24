@@ -1,14 +1,14 @@
 import React from 'react';
-import { Container, Segment, Form, Header, Input } from 'semantic-ui-react';
+import { Container, Segment, Form, Input, Header } from 'semantic-ui-react';
 
-class AddStore extends React.Component {
+class AddAdmin extends React.Component {
     constructor(props) {
         super(props);
 
         this.state = { value: '' };
 
         this.handleChange = this.handleChange.bind(this);
-        this.onAddStoreClick = props.onAddStoreClick;
+        this.onAddAdminClick = props.onAddAdminClick;
     }
 
     handleChange(event) {
@@ -19,17 +19,17 @@ class AddStore extends React.Component {
         return (
             <Container text>
                 <Segment raised>
-                    <Header>Add a new store</Header>
-                    <Form onSubmit={(event) => { this.onAddStoreClick(event, this.state.value)}}>
+                    <Header>Add a new admin user to the marketplace</Header>
+                    <Form onSubmit={(event) => { this.onAddAdminClick(event, this.state.value)}}>
                         <Form.Group>
                             <Form.Field inline value={this.state.value} onChange={this.handleChange}>
-                                <label>Store name</label>
+                                <label>Admin address</label>
                                 <Input placeholder='ETH address' />
                             </Form.Field>
                             <Form.Button positive
                                 labelPosition='right'
                                 icon='add circle'
-                                content='Add store'
+                                content='Add admin'
                                  />
                         </Form.Group>
                     </Form>
@@ -39,4 +39,4 @@ class AddStore extends React.Component {
     }
 }
 
-export default AddStore
+export default AddAdmin

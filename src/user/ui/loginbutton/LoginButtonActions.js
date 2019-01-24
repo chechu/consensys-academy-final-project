@@ -1,7 +1,7 @@
 import { initUport, initBrowserProvider, getWeb3 } from './../../../util/connectors.js';
 import { browserHistory } from 'react-router';
 import { initContract, contract, ROLES } from '../../../util/contracts/marketplace';
-import { USER_LOGGED_IN, USER_BALANCE_UPDATED, USER_PENDING_FUNDS_UPDATED } from '../../../util/actions';
+import { USER_LOGGED_IN, USER_BALANCE_UPDATED, USER_PENDING_FUNDS_UPDATED, IS_EMERGENCY_UPDATED } from '../../../util/actions';
 
 function userLoggedIn(user) {
     return {
@@ -44,6 +44,10 @@ async function getUserData(dispatch, address) {
         const pendingFunds = await contract.methods.getPendingFunds().call();
         dispatch({ type: USER_PENDING_FUNDS_UPDATED, pendingFunds });
     }
+
+    // Is the contract in emergency?
+    const isEmergency = await contract.methods.stopped().call();
+    dispatch({ type: IS_EMERGENCY_UPDATED, isEmergency });
 
     return redirectAfterLogin();
 }
