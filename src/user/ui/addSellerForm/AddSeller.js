@@ -1,4 +1,5 @@
 import React from 'react';
+import { Container, Segment, Form, Input, Header } from 'semantic-ui-react';
 
 class AddSeller extends React.Component {
     constructor(props) {
@@ -16,14 +17,24 @@ class AddSeller extends React.Component {
 
     render() {
         return (
-            <form onSubmit={(event) => { this.onAddSellerClick(event, this.state.value)}}>
-                <strong>Add seller</strong><br/>
-                <label>
-                    Seller address:
-                    <input type="text" value={this.state.value} onChange={this.handleChange} />
-                </label>
-                <input type="submit" value="Submit" />
-            </form>
+            <Container text>
+                <Segment raised>
+                    <Header>Add a new seller user to the marketplace</Header>
+                    <Form onSubmit={(event) => { this.onAddSellerClick(event, this.state.value)}}>
+                        <Form.Group>
+                            <Form.Field inline value={this.state.value} onChange={this.handleChange}>
+                                <label>Seller address</label>
+                                <Input placeholder='ETH address' />
+                            </Form.Field>
+                            <Form.Button positive
+                                labelPosition='right'
+                                icon='add circle'
+                                content='Add seller'
+                                 />
+                        </Form.Group>
+                    </Form>
+                </Segment>
+            </Container>
         );
     }
 }
