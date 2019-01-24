@@ -10,6 +10,8 @@ According to this: https://ethereum.stackexchange.com/a/39302 You don't need to 
 
 # Relevant links
 
+[Ethereum Natural Specification Format](https://github.com/ethereum/wiki/wiki/Ethereum-Natural-Specification-Format)
+
 ## Stylesheets
 https://uigradients.com
 

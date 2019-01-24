@@ -1,26 +1,31 @@
 pragma solidity ^0.5.0;
 
 import 'openzeppelin-solidity/contracts/ownership/Ownable.sol';
-
+/**
+ * @title Marketplace contract to sell, buy and withdraw funds
+ * @author Jesús Lanchas
+ * @notice This contract belongs to a final project in the Developer Program 2018 @ Consensys Academy
+ * @dev All outcome values in transaction methods are included in events
+ */
 contract Marketplace is Ownable {
 
     enum Roles { ADMIN, SELLER, BUYER }
 
-    /* Circuit breaker */
+    // Circuit breaker
     bool public stopped = false;
 
-    /* To know the role of a specific user */
+    // To know the role of a specific user
     mapping(address => Roles) roles;
     mapping(address => bool) privilegedUsers;
 
-    /* Stores owned by sellers */
+    // Stores owned by sellers
     mapping(address => Empire) empires;
     address[] sellers;
 
-    /* Payments */
+    // Payments
     mapping (address => uint) pendingFunds;
 
-    /* Structs */
+    // Structs
     struct Empire {
         mapping(bytes32 => Store) stores;
         bytes32[] storesIds;
@@ -41,12 +46,13 @@ contract Marketplace is Ownable {
         uint availableNumItems;
     }
 
-    /* Events */
+    // Management events
     event SellerAdded(address newSeller);
     event SellerRemoved(address oldSeller);
     event AdminAdded(address newAdmin);
     event AdminRemoved(address oldAdmin);
 
+    // Business events
     event StoreCreated(address seller, string name, bytes32 storeId);
     event StoreRemoved(address seller, bytes32 storeId);
     event ItemCreated(address seller, bytes32 storeId, uint sku, string name, uint price, uint availableNumItems);
@@ -54,12 +60,12 @@ contract Marketplace is Ownable {
     event ItemEdited(address seller, bytes32 storeId, uint sku, string name, uint price, uint availableNumItems);
     event ItemPurchased(address seller, bytes32 storeId, uint sku, uint numPurchasedItems, uint newAvailableNumItems);
 
-    /* Roles modifiers */
+    // Roles modifiers
     modifier isAdmin () { require (privilegedUsers[msg.sender] && roles[msg.sender] == Roles.ADMIN, 'User must have the ADMIN role'); _;}
     modifier isSeller () { require (privilegedUsers[msg.sender] && roles[msg.sender] == Roles.SELLER, 'User must have the SELLER role'); _;}
     modifier isBuyer (address _address) { require (!privilegedUsers[_address], 'User must be a buyer'); _;}
 
-    /* Ownership modifiers */
+    // Ownership modifiers
     modifier isSellerOwner (bytes32 storeId) { require(empires[msg.sender].stores[storeId].storeId != 0, 'User must be the owner of the store'); _; }
     modifier isItemSeller (bytes32 storeId, uint sku) {
         require (
@@ -68,30 +74,53 @@ contract Marketplace is Ownable {
         _;
     }
 
-    /* Circuit breaker */
+    // Circuit breaker
     modifier stopInEmergency { if (!stopped) _; }
+    /**
+     * @notice Toggle the emergency state of the contract. Only the owner can do this
+     */
     function toggleContractActive() public onlyOwner {
         stopped = !stopped;
     }
 
     /* Managing permissions */
 
+    /**
+     * @notice Getting the current role of the sender in the contract
+     * @return The enum value of Roles associated with the sender of the message
+     * @dev A no privileged user is considered a buyer. Owner is not a role in the contract
+     */
     function getRole() public view returns(Roles) {
         return privilegedUsers[msg.sender] ? roles[msg.sender] : Roles.BUYER;
     }
 
+    /**
+     * @notice Add the address passed as parameter in the list of admins
+     * @param newAdmin The address that we want to include as Admin in the contract
+     * @dev Event emitted on success: AdminAdded
+     */
     function addAdmin(address newAdmin) public stopInEmergency onlyOwner {
         roles[newAdmin] = Roles.ADMIN;
         privilegedUsers[newAdmin] = true;
         emit AdminAdded(newAdmin);
     }
 
+    /**
+     * @notice Remove an addres from the list of valid admins
+     * @param oldAdmin The address that we want to remove from the list of admins
+     * @dev Event emitted: AdminRemoved
+     */
     function removeAdmin(address oldAdmin) public stopInEmergency onlyOwner {
         delete roles[oldAdmin];
         delete privilegedUsers[oldAdmin];
         emit AdminRemoved(oldAdmin);
     }
 
+    /**
+     * @notice Add an address to the list of valid sellers
+     * @params newSeller The address that we want to add as seller
+     * @dev Event emitted: SellerAdded
+     */
     function addSeller(address newSeller) public stopInEmergency isAdmin isBuyer(newSeller) {
         roles[newSeller] = Roles.SELLER;
         privilegedUsers[newSeller] = true;
