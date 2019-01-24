@@ -8,7 +8,12 @@ Moving the last item of the array on the position of the item that I want to rem
 
 According to this: https://ethereum.stackexchange.com/a/39302 You don't need to delete explicitly using `delete array[index]`. It's enough with `array.length--`.
 
+## Circuit breaker
+The flag `stopped` is public, to allow to know if the contract is stopped or not from outside.
+
 # Relevant links
+
+[Ethereum Natural Specification Format](https://github.com/ethereum/wiki/wiki/Ethereum-Natural-Specification-Format)
 
 ## Stylesheets
 https://uigradients.com
