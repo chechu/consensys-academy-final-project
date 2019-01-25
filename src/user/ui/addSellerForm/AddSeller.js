@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container, Segment, Form, Input, Header } from 'semantic-ui-react';
+import { Container, Segment, Form, Input, Header, Grid } from 'semantic-ui-react';
 
 class AddSeller extends React.Component {
     constructor(props) {
@@ -16,23 +16,36 @@ class AddSeller extends React.Component {
     }
 
     render() {
+        const ensDescription = this.props.ensEnabled ? 'or the <strong>ENS name</strong> ' : '';
+        const ensPlaceholder = this.props.ensEnabled ? ' or ENS name' : '';
         return (
             <Container text>
                 <Segment raised>
-                    <Header>Add a new seller user to the marketplace</Header>
-                    <Form onSubmit={(event) => { this.onAddSellerClick(event, this.state.value)}}>
-                        <Form.Group>
-                            <Form.Field inline value={this.state.value} onChange={this.handleChange}>
-                                <label>Seller address</label>
-                                <Input placeholder='ETH address' />
-                            </Form.Field>
-                            <Form.Button positive
-                                labelPosition='right'
-                                icon='add circle'
-                                content='Add seller'
-                                 />
-                        </Form.Group>
-                    </Form>
+                    <Grid columns={1} padded='vertically'>
+                        <Grid.Row>
+                            <Grid.Column>
+                                <Header>Add a new seller user to the marketplace</Header>
+                                <Header.Subheader>Introduce the <strong>ETH address</strong> {ensDescription}of the user to add as seller.</Header.Subheader>
+                            </Grid.Column>
+                        </Grid.Row>
+                        <Grid.Row>
+                            <Grid.Column>
+                                <Form onSubmit={(event) => { this.onAddSellerClick(event, this.state.value, this.props.ensEnabled)}}>
+                                    <Form.Group>
+                                        <Form.Field inline value={this.state.value} onChange={this.handleChange}>
+                                            <label>Seller address</label>
+                                            <Input placeholder={'Address' + ensPlaceholder} />
+                                        </Form.Field>
+                                        <Form.Button positive
+                                            labelPosition='right'
+                                            icon='add circle'
+                                            content='Add seller'
+                                             />
+                                    </Form.Group>
+                                </Form>
+                            </Grid.Column>
+                        </Grid.Row>
+                    </Grid>
                 </Segment>
             </Container>
         );

@@ -1,12 +1,19 @@
 import produce from 'immer';
 import { CONFIRMATIONS_THRESHOLD } from './ui/expectingConfirmations/ExpectingConfirmations';
-import { INIT_TX, CONFIRMATION_TX, ETH_PRICE_UPDATED } from '../util/actions';
+import { INIT_TX, CONFIRMATION_TX, ETH_PRICE_UPDATED, NETWORK_VERSION_UPDATED } from '../util/actions';
 
 const initialState = {
     pendingTx: {}, // Map with pending transactions info
     confirmedTx: [], // List of tx hashes with the required number of confirmations
     ETHPriceInUSD: null,
+    ensEnabled: false,
 }
+
+const ENS_SUPPORTED_NETWORK_VERSIONS = [
+    1, // Mainnet
+    3, // Ropsten
+    4, // Rinkeby
+];
 
 const txReducer = (state = initialState, action) => {
     if (action.type === INIT_TX) {
@@ -35,6 +42,12 @@ const txReducer = (state = initialState, action) => {
         console.log(`Changing the ETH_PRICE_UPDATED to [${action.price}]. Data provided by Kraken via Oraclize`);
         return produce(state, (draftState) => {
             draftState.ETHPriceInUSD = action.price;
+        });
+    }
+
+    if (action.type === NETWORK_VERSION_UPDATED) {
+        return produce(state, (draftState) => {
+            draftState.ensEnabled = ENS_SUPPORTED_NETWORK_VERSIONS.includes(action.version);
         });
     }
 

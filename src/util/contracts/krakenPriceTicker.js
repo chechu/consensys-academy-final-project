@@ -1,7 +1,7 @@
 import { getWeb3, DEFAULT_GAS_PRICE } from '../connectors'
 
 const abi = require('./abi/KrakenPriceTicker.json').abi;
-const CONTRACT_ADDRESS = '0xa88ec2c91f51b3FF4db6dc5c66cA684663eB3af1';
+const CONTRACT_ADDRESS = '0xdA8b4750A7EE5327Cd080eDc1A0251fd179F1C10';
 
 export let contract;
 
