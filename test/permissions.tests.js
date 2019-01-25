@@ -15,8 +15,7 @@ contract('Marketplace', function(accounts) {
             await marketplaceInstance.addAdmin(admin, {from: owner});
 
             // To ensure that `seller` is a not a Seller yet in the Contract
-            await marketplaceInstance.removeSeller(seller, {from: admin});
-            await marketplaceInstance.removeSeller(secondarySeller, {from: admin});
+            await utils.removeSellers(marketplaceInstance);
         });
 
         it('should return role BUYER for unknown user', async () => {
@@ -58,8 +57,8 @@ contract('Marketplace', function(accounts) {
             await marketplaceInstance.addAdmin(admin, {from: owner});
             await marketplaceInstance.addSeller(seller, {from: admin});
 
-            // When
-            const tx = await marketplaceInstance.removeSeller(seller, {from:admin});
+            // When - Remove the unique seller in the contract, withn index 0
+            const tx = await marketplaceInstance.removeSeller(0, {from:admin});
 
             // Then
             assert.equal(tx.logs[0].event, 'SellerRemoved');
@@ -79,7 +78,7 @@ contract('Marketplace', function(accounts) {
 
             // When
             try {
-                await marketplaceInstance.removeSeller(secondarySeller, {from:seller});
+                await marketplaceInstance.removeSeller(0, {from:seller});
                 assert.fail('One seller has removed another seller');
             } catch (error) {
                 // Then -> success

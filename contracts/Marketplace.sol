@@ -43,6 +43,7 @@ contract Marketplace is Ownable {
 
     struct Item {
         uint sku;
+        uint skuIndex; // position of this item in the array store.items
         string name;
         uint price;
         uint availableNumItems;
@@ -131,24 +132,20 @@ contract Marketplace is Ownable {
     }
 
     /**
-     * @notice Remove the address `oldAddress` as seller in the contract, transforming it into a buyer. The pending funds will be kept.
+     * @notice Remove the seller set at index `sellerIndex` as seller in the contract, transforming it into a buyer. The pending funds will be kept.
      * @dev This operation changes the order in the sellers array. Event emitted: SellerRemoved
-     * @param oldSeller The address of the seller that we want to remove
+     * @param sellerIndex The index of the seller in the array of sellers, of the seller that we want to remove
      */
-    function removeSeller(address oldSeller) public stopInEmergency isAdmin {
+    function removeSeller(uint sellerIndex) public stopInEmergency isAdmin {
         // Soft control, we don't require the existance of the seller...
-        if (privilegedUsers[oldSeller] && roles[oldSeller] == Roles.SELLER) {
-            uint sellerIndex = 0;
+        require(sellerIndex >= 0 && sellerIndex < sellers.length, 'Seller index is out of bound');
+        address sellerAddress = sellers[sellerIndex];
 
-            while(sellerIndex < sellers.length && sellers[sellerIndex] != oldSeller) {
-                sellerIndex++;
-            }
-
-            require(sellerIndex < sellers.length, 'Seller not found in the list of sellers');
-
+        // Soft control, we don't require the existance of the seller...
+        if (privilegedUsers[sellerAddress] && roles[sellerAddress] == Roles.SELLER) {
             // Delete from the maps
-            delete roles[oldSeller];
-            delete privilegedUsers[oldSeller];
+            delete roles[sellerAddress];
+            delete privilegedUsers[sellerAddress];
 
             // Delete from array
             // Removing and compacting an item in an array: https://github.com/su-squares/ethereum-contract/blob/master/contracts/SuNFT.sol#L296
@@ -157,7 +154,7 @@ contract Marketplace is Ownable {
             }
             sellers.length--;
 
-            emit SellerRemoved(oldSeller);
+            emit SellerRemoved(sellerAddress);
         }
     }
 
@@ -285,7 +282,7 @@ contract Marketplace is Ownable {
         require(price > 0, 'Price must be a positive number');
         require(availableNumItems >= 0, 'Available items must be a positive number or zero');
 
-        store.items[sku] = Item({ sku: sku, name: name, price: price, availableNumItems: availableNumItems });
+        store.items[sku] = Item({ sku: sku, skuIndex: store.skus.length, name: name, price: price, availableNumItems: availableNumItems });
         store.skus.push(sku);
 
         emit ItemCreated(msg.sender, store.storeId, sku, name, price, availableNumItems);
@@ -311,7 +308,7 @@ contract Marketplace is Ownable {
         require(price > 0, 'Price must be a positive number');
         require(availableNumItems >= 0, 'Available items must be a positive number or zero');
 
-        store.items[sku] = Item({ sku: sku, name: name, price: price, availableNumItems: availableNumItems });
+        store.items[sku] = Item({ sku: sku, skuIndex: store.items[sku].skuIndex, name: name, price: price, availableNumItems: availableNumItems });
 
         emit ItemEdited(msg.sender, store.storeId, sku, name, price, availableNumItems);
     }
@@ -369,11 +366,7 @@ contract Marketplace is Ownable {
         isItemSeller(storeId, sku) {
 
         Store storage store = empires[msg.sender].stores[storeId];
-        uint skuIndex = 0;
-
-        while(skuIndex < store.skus.length && store.skus[skuIndex] != sku) {
-            skuIndex++;
-        }
+        uint skuIndex = store.items[sku].skuIndex;
 
         require(skuIndex < store.skus.length, 'SKU not found in item list');
 
@@ -384,6 +377,7 @@ contract Marketplace is Ownable {
         // Removing and compacting an item in an array: https://github.com/su-squares/ethereum-contract/blob/master/contracts/SuNFT.sol#L296
         if (store.skus.length > 1 && skuIndex != store.skus.length - 1)        {
             store.skus[skuIndex] = store.skus[store.skus.length - 1];
+            store.items[store.skus[skuIndex]].skuIndex = skuIndex; // Updating the double link
         }
 
         // delete store.skus[store.skus.length - 1];
