@@ -32,7 +32,7 @@ const txReducer = (state = initialState, action) => {
     }
 
     if (action.type === ETH_PRICE_UPDATED) {
-        console.log('Changing the ETH_PRICE_UPDATED to: ', action.price);
+        console.log(`Changing the ETH_PRICE_UPDATED to [${action.price}]. Data provided by Kraken via Oraclize`);
         return produce(state, (draftState) => {
             draftState.ETHPriceInUSD = action.price;
         });

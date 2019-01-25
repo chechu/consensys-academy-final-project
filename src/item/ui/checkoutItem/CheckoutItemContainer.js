@@ -5,6 +5,7 @@ import { checkoutItem } from './CheckoutItemActions'
 const mapStateToProps = (state, ownProps) => {
     return {
         buyerAddress: state.user.data.address,
+        ETHPriceInUSD: state.tx.ETHPriceInUSD,
     }
 }
 

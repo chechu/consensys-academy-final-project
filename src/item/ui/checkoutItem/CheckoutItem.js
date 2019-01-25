@@ -1,5 +1,5 @@
 import React from 'react';
-import { Modal, Input, Form, Icon, Menu, Table } from 'semantic-ui-react';
+import { Popup, Modal, Input, Form, Icon, Menu, Table } from 'semantic-ui-react';
 import { ROLES } from '../../../util/contracts/marketplace';
 import { getWeb3 } from '../../../util/connectors';
 
@@ -34,6 +34,16 @@ class CheckoutItem extends React.Component {
         const BN = web3.utils.BN;
         const bnPrice = new BN(this.props.item.price);
         const menuItem = this.MenuItem();
+        const ETHPriceInUSD = this.props.ETHPriceInUSD;
+
+        let unitaryUSDPrice = (<Popup trigger={<span>Not available</span>}><Popup.Header>ETH - USD exchange rate not available</Popup.Header><Popup.Content>This data is provided by an integration with Oraclize, and is only available in Rinkeby</Popup.Content></Popup>);
+        let totalUSDPrice = unitaryUSDPrice;
+        if (ETHPriceInUSD) {
+            unitaryUSDPrice = (web3.utils.fromWei(this.props.item.price, 'ether') * ETHPriceInUSD).toFixed(2);
+            totalUSDPrice = (web3.utils.fromWei(bnPrice.mul(new BN(this.state.numItemsToPurchase)), 'ether') * ETHPriceInUSD).toFixed(2);
+        }
+
+
         return(
             <Modal onClose={this.close} size='mini' open={this.state.open} trigger={menuItem}>
                 <Modal.Header>Checkout items</Modal.Header>
@@ -51,7 +61,12 @@ class CheckoutItem extends React.Component {
                                 <Table.HeaderCell />
                                 <Table.HeaderCell>Finney</Table.HeaderCell>
                                 <Table.HeaderCell>Ether</Table.HeaderCell>
-                                <Table.HeaderCell>USD</Table.HeaderCell>
+                                <Table.HeaderCell>
+                                    <Popup hideOnScroll trigger={<span>USD*</span>}>
+                                        <Popup.Header>Updated data</Popup.Header>
+                                        <Popup.Content>Data from <a href='http://www.oraclize.it'>Oraclize</a></Popup.Content>
+                                    </Popup>
+                                </Table.HeaderCell>
                             </Table.Row>
                         </Table.Header>
 
@@ -60,13 +75,13 @@ class CheckoutItem extends React.Component {
                                 <Table.Cell>Unitary price</Table.Cell>
                                 <Table.Cell>{web3.utils.fromWei(this.props.item.price, 'finney')}</Table.Cell>
                                 <Table.Cell>{web3.utils.fromWei(this.props.item.price, 'ether')}</Table.Cell>
-                                <Table.Cell>TODO</Table.Cell>
+                                <Table.Cell>{unitaryUSDPrice}</Table.Cell>
                             </Table.Row>
                             <Table.Row>
                                 <Table.Cell>Total price</Table.Cell>
                                 <Table.Cell>{web3.utils.fromWei(bnPrice.mul(new BN(this.state.numItemsToPurchase)), 'finney')}</Table.Cell>
                                 <Table.Cell>{web3.utils.fromWei(bnPrice.mul(new BN(this.state.numItemsToPurchase)), 'ether')}</Table.Cell>
-                                <Table.Cell>TODO</Table.Cell>
+                                <Table.Cell>{totalUSDPrice}</Table.Cell>
                             </Table.Row>
                         </Table.Body>
                       </Table>

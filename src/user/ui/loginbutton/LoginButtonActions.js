@@ -24,7 +24,6 @@ function redirectAfterLogin() {
 
 async function getUserData(dispatch, address) {
     initMarketplaceContract(address);
-    initKrakenContract(address);
 
     // Role info
     let role = await marketplace.methods.getRole().call();
@@ -52,12 +51,21 @@ async function getUserData(dispatch, address) {
     dispatch({ type: IS_EMERGENCY_UPDATED, isEmergency });
 
     // Kraken subscription to changes in ETH-USD
-    kraken.events.LogNewKrakenPriceTicker({ fromBlock: 0 }, (error, res) => {
-        console.log('Change from Kraken!', { error, res });
-        dispatch({ type: ETH_PRICE_UPDATED, price: res.returnValues.price });
-    });
+    subscribeToKrakenPriceTicker(address, dispatch);
 
     return redirectAfterLogin();
+}
+
+function subscribeToKrakenPriceTicker(address, dispatch) {
+    initKrakenContract(address);
+
+    kraken.events.LogNewKrakenPriceTicker({ fromBlock: 0 }, (error, res) => {
+        if (!error) {
+            if (res.returnValues && res.returnValues.price) {
+                dispatch({ type: ETH_PRICE_UPDATED, price: parseFloat(res.returnValues.price, 10) });
+            }
+        }
+    });
 }
 
 function browserProviderLogin() {
