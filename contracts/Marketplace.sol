@@ -1,6 +1,8 @@
 pragma solidity ^0.5.0;
 
 import 'openzeppelin-solidity/contracts/ownership/Ownable.sol';
+import { SafeMath } from 'openzeppelin-solidity/contracts/math/SafeMath.sol';
+
 /**
  * @title Marketplace contract to sell, buy and withdraw funds
  * @author Jesús Lanchas
@@ -201,6 +203,7 @@ contract Marketplace is Ownable {
     /**
      * @notice Remove the store with storeId `storeId`, set in position `storeIndex`.
      * @dev empire.storesIds[storeIndex] must be equals to storeId. The only reason to accept the two params is efficiency.
+     * @dev Store's items are deleted in a for-loop, so if the number of items is too high this could be an issue.
      * @param storeId The id of the store to remove
      * @param storeIndex The index of the store, in the array of stores, that we want to remove
      */
@@ -211,7 +214,7 @@ contract Marketplace is Ownable {
 
         require(empire.storesIds[storeIndex] == storeId, 'The storeId provided is not coherent with the store index passed');
 
-        // Removing items associated with the store
+        // Removing items associated with the store - This could generate a gas problem if the number of items is too high
         for(uint skuIndex = 0; skuIndex < store.skus.length; skuIndex++) {
             delete store.items[store.skus[skuIndex]];
         }
@@ -279,7 +282,6 @@ contract Marketplace is Ownable {
         // Checking that there aren't any item with the same sku in the store
         require(store.items[sku].sku == 0, 'SKU must be unique for a store');
 
-        // TODO Check integer overflows (more in the buy operation)
         require(price > 0, 'Price must be a positive number');
         require(availableNumItems >= 0, 'Available items must be a positive number or zero');
 
@@ -418,7 +420,7 @@ contract Marketplace is Ownable {
 
         // Updating the storage
         item.availableNumItems -= numPurchasedItems;
-        pendingFunds[seller] += msg.value;
+        pendingFunds[seller] = SafeMath.add(pendingFunds[seller], msg.value);
 
         emit ItemPurchased(seller, store.storeId, item.sku, numPurchasedItems, item.availableNumItems);
     }

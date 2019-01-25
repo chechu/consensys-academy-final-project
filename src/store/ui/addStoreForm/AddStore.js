@@ -24,7 +24,7 @@ class AddStore extends React.Component {
                         <Form.Group>
                             <Form.Field inline value={this.state.value} onChange={this.handleChange}>
                                 <label>Store name</label>
-                                <Input placeholder='ETH address' />
+                                <Input placeholder='Store name' />
                             </Form.Field>
                             <Form.Button positive
                                 labelPosition='right'
