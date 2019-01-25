@@ -10,12 +10,13 @@ export function initTx(txHash) {
 
 export function confirmationTx(confirmationNumber, receipt, onThresholdConfirmation) {
     return function (dispatch, getState) {
+        console.log(`Confirmation ${confirmationNumber} for TX [${receipt.transactionHash}]`);
         if (getState().tx.pendingTx[receipt.transactionHash]) {
             confirmationNumber = (confirmationNumber !== undefined) ? confirmationNumber + 1 : undefined; // The first one is 0
 
             const expectedConfirmations = confirmationNumber ? (CONFIRMATIONS_THRESHOLD - confirmationNumber) : CONFIRMATIONS_THRESHOLD;
 
-            if (!expectedConfirmations) {
+            if (!expectedConfirmations && onThresholdConfirmation) {
                 onThresholdConfirmation(receipt);
             }
 

@@ -7,6 +7,7 @@ const mapStateToProps = (state, ownProps) => {
         roleName: state.user.data.role.name,
         balance: state.user.balance,
         pendingFunds: state.user.pendingFunds,
+        ETHPriceInUSD: state.tx.ETHPriceInUSD,
     }
 }
 

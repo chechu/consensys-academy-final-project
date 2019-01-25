@@ -1,7 +1,8 @@
 import { initUport, initBrowserProvider, getWeb3 } from './../../../util/connectors.js';
 import { browserHistory } from 'react-router';
-import { initContract, contract, ROLES } from '../../../util/contracts/marketplace';
-import { USER_LOGGED_IN, USER_BALANCE_UPDATED, USER_PENDING_FUNDS_UPDATED, IS_EMERGENCY_UPDATED } from '../../../util/actions';
+import { initContract as initMarketplaceContract, contract as marketplace, ROLES } from '../../../util/contracts/marketplace';
+import { initContract as initKrakenContract, contract as kraken } from '../../../util/contracts/krakenPriceTicker';
+import { USER_LOGGED_IN, USER_BALANCE_UPDATED, USER_PENDING_FUNDS_UPDATED, IS_EMERGENCY_UPDATED, ETH_PRICE_UPDATED } from '../../../util/actions';
 
 function userLoggedIn(user) {
     return {
@@ -22,13 +23,13 @@ function redirectAfterLogin() {
 }
 
 async function getUserData(dispatch, address) {
-    initContract(address);
+    initMarketplaceContract(address);
 
     // Role info
-    let role = await contract.methods.getRole().call();
+    let role = await marketplace.methods.getRole().call();
 
     // Is the owner?
-    const isOwner = await contract.methods.isOwner().call();
+    const isOwner = await marketplace.methods.isOwner().call();
     if (isOwner) {
         role = ROLES.OWNER;
     }
@@ -41,15 +42,30 @@ async function getUserData(dispatch, address) {
 
     // Pending funds
     if (role === ROLES.SELLER) {
-        const pendingFunds = await contract.methods.getPendingFunds().call();
+        const pendingFunds = await marketplace.methods.getPendingFunds().call();
         dispatch({ type: USER_PENDING_FUNDS_UPDATED, pendingFunds });
     }
 
-    // Is the contract in emergency?
-    const isEmergency = await contract.methods.stopped().call();
+    // Is the marketplace in emergency?
+    const isEmergency = await marketplace.methods.stopped().call();
     dispatch({ type: IS_EMERGENCY_UPDATED, isEmergency });
 
+    // Kraken subscription to changes in ETH-USD
+    subscribeToKrakenPriceTicker(address, dispatch);
+
     return redirectAfterLogin();
+}
+
+function subscribeToKrakenPriceTicker(address, dispatch) {
+    initKrakenContract(address);
+
+    kraken.events.LogNewKrakenPriceTicker({ fromBlock: 0 }, (error, res) => {
+        if (!error) {
+            if (res.returnValues && res.returnValues.price) {
+                dispatch({ type: ETH_PRICE_UPDATED, price: parseFloat(res.returnValues.price, 10) });
+            }
+        }
+    });
 }
 
 function browserProviderLogin() {
