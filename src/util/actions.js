@@ -17,6 +17,8 @@ export const PULL_ITEMS = 'PULL_ITEMS';
 export const USER_PENDING_FUNDS_UPDATED = 'USER_PENDING_FUNDS_UPDATED';
 export const IS_EMERGENCY_UPDATED = 'IS_EMERGENCY_UPDATED';
 
+export const ETH_PRICE_UPDATED = 'ETH_PRICE_UPDATED';
+
 /* Actions */
 
 function itemsMustBeUpdated(store, forceFetch) {
