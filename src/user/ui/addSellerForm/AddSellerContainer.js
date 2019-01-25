@@ -3,21 +3,23 @@ import AddSeller from './AddSeller';
 import { addSeller } from './AddSellerActions';
 
 const mapStateToProps = (state, ownProps) => {
-  return {}
+    return {
+        ensEnabled: state.tx.ensEnabled,
+    }
 }
 
 const mapDispatchToProps = (dispatch) => {
-  return {
-    onAddSellerClick: (event, targetAddress) => {
-        event.preventDefault();
-        dispatch(addSeller(targetAddress));
+    return {
+        onAddSellerClick: (event, targetAddress, ensEnabled) => {
+           event.preventDefault();
+           dispatch(addSeller(targetAddress, ensEnabled));
+        }
     }
-  }
 }
 
 const AddSellerContainer = connect(
-  mapStateToProps,
-  mapDispatchToProps
+    mapStateToProps,
+    mapDispatchToProps
 )(AddSeller)
 
 export default AddSellerContainer

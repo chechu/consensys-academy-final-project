@@ -2,7 +2,14 @@ import { initUport, initBrowserProvider, getWeb3 } from './../../../util/connect
 import { browserHistory } from 'react-router';
 import { initContract as initMarketplaceContract, contract as marketplace, ROLES } from '../../../util/contracts/marketplace';
 import { initContract as initKrakenContract, contract as kraken } from '../../../util/contracts/krakenPriceTicker';
-import { USER_LOGGED_IN, USER_BALANCE_UPDATED, USER_PENDING_FUNDS_UPDATED, IS_EMERGENCY_UPDATED, ETH_PRICE_UPDATED } from '../../../util/actions';
+import {
+    USER_LOGGED_IN,
+    USER_BALANCE_UPDATED,
+    USER_PENDING_FUNDS_UPDATED,
+    IS_EMERGENCY_UPDATED,
+    ETH_PRICE_UPDATED,
+    NETWORK_VERSION_UPDATED,
+} from '../../../util/actions';
 
 function userLoggedIn(user) {
     return {
@@ -53,7 +60,17 @@ async function getUserData(dispatch, address) {
     // Kraken subscription to changes in ETH-USD
     subscribeToKrakenPriceTicker(address, dispatch);
 
+    // Check the availabilty of ENS in the network
+    checkEnsAvailability(dispatch);
+
     return redirectAfterLogin();
+}
+
+function checkEnsAvailability(dispatch) {
+    getWeb3().eth.net.getId().then(function(version) {
+        console.log({version})
+        dispatch({ type: NETWORK_VERSION_UPDATED, version });
+    });
 }
 
 function subscribeToKrakenPriceTicker(address, dispatch) {

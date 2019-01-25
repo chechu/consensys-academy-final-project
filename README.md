@@ -30,6 +30,10 @@ A better solution is to store the index in the store struct, and update it when 
 ## Libraries
 I'm using SafeMath, from OpenZeppeling project. The use is and edge case, increasing the pending funds, but it's just a demo of using a library.
 
+## ENS
+Sample: michalzalecki.test --> 0x7d20cb28c496a76173ee828ecacfb08deb379e8d
+From: https://michalzalecki.com/register-test-domain-with-ens/
+
 # Relevant links
 
 [Ethereum Natural Specification Format](https://github.com/ethereum/wiki/wiki/Ethereum-Natural-Specification-Format)

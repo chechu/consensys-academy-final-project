@@ -34,7 +34,7 @@ const PendingTx = ({ txHash, expectedConfirmations }) => (
         <List.Icon name='ethereum' size='large' verticalAlign='middle' />
         <List.Content>
             <List.Header as='a' target='_blank' href={'https://rinkeby.etherscan.io/tx/' + txHash}>{txHash}</List.Header>
-            <List.Description as='a'>Waiting for {expectedConfirmations} confirmations yet</List.Description>
+            <List.Description as='a'>Waiting for {expectedConfirmations} confirmations more</List.Description>
         </List.Content>
     </List.Item>
 )
