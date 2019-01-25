@@ -43,7 +43,6 @@ class CheckoutItem extends React.Component {
             totalUSDPrice = (web3.utils.fromWei(bnPrice.mul(new BN(this.state.numItemsToPurchase)), 'ether') * ETHPriceInUSD).toFixed(2);
         }
 
-
         return(
             <Modal onClose={this.close} size='mini' open={this.state.open} trigger={menuItem}>
                 <Modal.Header>Checkout items</Modal.Header>
