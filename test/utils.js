@@ -4,12 +4,18 @@ const setAccounts = (accounts) => {
     [owner, admin, seller, buyer, secondarySeller, secondaryBuyer] = accounts;
 }
 
+const removeSellers = async (marketplaceInstance) => {
+    const numSellers = await marketplaceInstance.getNumberOfSellers();
+    for(let i = 0; i < numSellers; i++) {
+        await marketplaceInstance.removeSeller(0, {from: admin});
+    }
+}
+
 const resetAccountRoles = async (marketplaceInstance) => {
     await marketplaceInstance.addAdmin(admin, {from: owner});
 
     // To ensure that `seller` is a Seller in the Contract
-    await marketplaceInstance.removeSeller(seller, {from: admin});
-    await marketplaceInstance.removeSeller(secondarySeller, {from: admin});
+    await removeSellers(marketplaceInstance);
     await marketplaceInstance.addSeller(seller, {from: admin});
     await marketplaceInstance.addSeller(secondarySeller, {from: admin});
 }
@@ -55,6 +61,7 @@ const ROLES = {
 module.exports = {
     setAccounts,
     resetAccountRoles,
+    removeSellers,
     resetStores,
     purchaseItem,
     getTransactionGasCost,

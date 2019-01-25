@@ -263,6 +263,38 @@ contract('Marketplace', function(accounts) {
                 // Then
                 assert.equal(numItems, 1);
             });
+
+            it('should deal with continous add and remove items', async() => {
+                // Given - 4 items added to the store
+                const storeName = 'TestStore:itemRemoveMix';
+                const items = [
+                    { sku: 1, name: 'TestItem:itemRemoveMix1', price: 5, availableNumItems: 10 },
+                    { sku: 2, name: 'TestItem:itemRemoveMix2', price: 5, availableNumItems: 10 },
+                    { sku: 3, name: 'TestItem:itemRemoveMix3', price: 5, availableNumItems: 10 },
+                    { sku: 4, name: 'TestItem:itemRemoveMix4', price: 5, availableNumItems: 10 },
+                ];
+                const newItem = { sku: 5, name: 'TestItem:itemRemoveMix5', price: 5, availableNumItems: 10 };
+                await marketplaceInstance.addStore(storeName, { from: seller });
+                const storeId = await marketplaceInstance.getStoreId.call(seller, 0);
+                await Promise.all(items.map(item => marketplaceInstance.addItem(storeId, item.sku, item.name, item.price, item.availableNumItems, {from:seller})));
+
+                // When
+                await marketplaceInstance.removeItem(storeId, items[1].sku, {from:seller});
+                await marketplaceInstance.removeItem(storeId, items[3].sku, {from:seller});
+                await marketplaceInstance.addItem(storeId, newItem.sku, newItem.name, newItem.price, newItem.availableNumItems, {from:seller});
+                await marketplaceInstance.removeItem(storeId, items[0].sku, {from:seller});
+
+                const numItems = await marketplaceInstance.getNumberOfItems.call(seller, storeId);
+                const response = await marketplaceInstance.getItemMetadata.call(seller, storeId, newItem.sku, {from:buyer});
+
+                // Then
+                assert.equal(numItems, 2);
+
+                // Then
+                assert.equal(response['0'], newItem.name);
+                assert.equal(response['1'], newItem.price);
+                assert.equal(response['2'], newItem.availableNumItems);
+            });
         });
     });
 });
