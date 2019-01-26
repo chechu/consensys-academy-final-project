@@ -5,8 +5,12 @@ This the repository of the ConsenSys Academy’s 2018-2019 Developer Program Fin
 ## Content
 
 1. [Description](#description)
-2. [Set up](#set-up)
-3. [Flows](#flows)
+2. [Local set up](#local-set-up)
+3. [Rinkeby set up](#rinkeby-set-up)
+4. [Flows](#flows)
+ 1. [Configure accounts in the application](#configure-accounts-in-the-application)
+ 2. [Buying and purchasing](#buying-and-purchasing)
+ 3. [Buying and purchasing](#buying-and-purchasing)
 
 ## Description
 
@@ -18,7 +22,7 @@ This DApp simulates a marketplace based on Ethereum. The main components are:
 
 * Smart contract [*KrakenPriceTicker*](https://github.com/chechu/consensys-academy-final-project/blob/master/contracts/KrakenPriceTicker.sol). Based on [this one](https://github.com/oraclize/ethereum-examples/blob/master/solidity/KrakenPriceTicker.sol), it allows to keep updated the exchange ration ETH-USD using a oracle of [Oraclize](http://www.oraclize.it/).
 
-## Set up
+## Local set up
 
 ### Create ETH accounts to test the DApp
 
@@ -70,6 +74,16 @@ Some features are only available on Rinkeby: ENS and Oraclize integration. To de
 $> npm run start
 ```
 
+## Rinkeby set up
+
+The contracts are deployed in Rinkeby in the following addresses:
+* Marketplace: [0xA41Bb3a4bBCA2F33D91f14731aA4f73C71f75E7E](https://rinkeby.etherscan.io/address/0xA41Bb3a4bBCA2F33D91f14731aA4f73C71f75E7E)
+* Kraken Price Ticker: [0x4e1655596E0AAd6611e94E9D1bBEf3C92A67Cb08](https://rinkeby.etherscan.io/address/0x4e1655596E0AAd6611e94E9D1bBEf3C92A67Cb08)
+
+These address are included in the codebase, so you don't need to change it to connect to Rinkeby, just run the local server with `npm run start`.
+
+## Flows
+
 ### Configure accounts in the application
 1. Go to http://localhost:3000
 
@@ -112,7 +126,3 @@ $> npm run start
 5. Login as the seller of the purcased item, and go to your Profile (link in the top right corner). From that you will be able to withdraw your funds.
 
 ![Withdraw](/doc/images/withdraw.png)
-
-## Flows
-
-
