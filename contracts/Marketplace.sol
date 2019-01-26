@@ -16,6 +16,9 @@ contract Marketplace is Ownable {
     // Circuit breaker
     bool public stopped = false;
 
+    // Limit to avoid out of gas issue iterating on items
+    uint8 public constant MAX_ITEMS_PER_STORE = 10;
+
     // To know the role of a specific user
     mapping(address => Roles) roles;
     mapping(address => bool) privilegedUsers;
@@ -63,13 +66,32 @@ contract Marketplace is Ownable {
     event ItemEdited(address seller, bytes32 storeId, uint sku, string name, uint price, uint availableNumItems);
     event ItemPurchased(address seller, bytes32 storeId, uint sku, uint numPurchasedItems, uint newAvailableNumItems);
 
-    // Roles modifiers
+    /* Roles modifiers */
+    /**
+     * @notice Require the address `msg.sender` to be a valid admin in the contract.
+     */
     modifier isAdmin () { require (privilegedUsers[msg.sender] && roles[msg.sender] == Roles.ADMIN, 'User must have the ADMIN role'); _;}
+
+    /**
+     * @notice Require the addres `msg.sender` to be a valid seller in the contract.
+     */
     modifier isSeller () { require (privilegedUsers[msg.sender] && roles[msg.sender] == Roles.SELLER, 'User must have the SELLER role'); _;}
+
+    /**
+     * @notice Require the address `_address` to be a buyer.
+     * @dev An address is considered a buyer is it is not an admin neither a seller.
+     */
     modifier isBuyer (address _address) { require (!privilegedUsers[_address], 'User must be a buyer'); _;}
 
     // Ownership modifiers
+    /**
+     * @notice Require the address `msg.sender` to be the owner of the store whose id is `storeId`
+     */
     modifier isSellerOwner (bytes32 storeId) { require(empires[msg.sender].stores[storeId].storeId != 0, 'User must be the owner of the store'); _; }
+
+    /**
+     * Require the address `msg.sender` to be the owner of the store whose id is `storeId` and where the item with sku `sku` is been sold
+     */
     modifier isItemSeller (bytes32 storeId, uint sku) {
         require (
             empires[msg.sender].stores[storeId].storeId != 0
@@ -78,7 +100,10 @@ contract Marketplace is Ownable {
     }
 
     // Circuit breaker
-    modifier stopInEmergency { if (!stopped) _; }
+    /**
+     * Require the contrat not to be in emergency
+     */
+    modifier stopInEmergency { require(!stopped, 'Contract in emergency mode'); _; }
     /**
      * @notice Toggle the emergency state of the contract. Only the owner can do this
      */
@@ -200,7 +225,7 @@ contract Marketplace is Ownable {
     /**
      * @notice Remove the store with storeId `storeId`, set in position `storeIndex`.
      * @dev empire.storesIds[storeIndex] must be equals to storeId. The only reason to accept the two params is efficiency.
-     * @dev Store's items are deleted in a for-loop, so if the number of items is too high this could be an issue.
+     * @dev Store's items are deleted in a for-loop, so if the number of items is too high this could be an issue. For that reason we limit the number of items in a store to `MAX_ITEMS_PER_STORE`
      * @param storeId The id of the store to remove
      * @param storeIndex The index of the store, in the array of stores, that we want to remove
      */
@@ -275,6 +300,8 @@ contract Marketplace is Ownable {
         isSeller
         isSellerOwner(storeId) {
         Store storage store = empires[msg.sender].stores[storeId];
+
+        require(store.skus.length <= MAX_ITEMS_PER_STORE, 'You have reach the max number of items per store');
 
         // Checking that there aren't any item with the same sku in the store
         require(store.items[sku].sku == 0, 'SKU must be unique for a store');
