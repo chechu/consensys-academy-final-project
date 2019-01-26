@@ -22,7 +22,7 @@ This DApp simulates a marketplace based on Ethereum. The main components are:
 
 ### Create ETH accounts to test the DApp
 
-Before running the application, my recommendation is to create four ETH accounts, that will be have the following roles in the application: deployer, admin, seller and buyer. You can use Metamask to create these accounts.
+Before running the application, my recommendation is to create **four ETH accounts**, that will have the following roles in the application: Deployer, Admin, Seller and Buyer. You can use Metamask to create these accounts. The roles are isolated, inheritance is not supported (for instance, an user with the role ADMIN cannot buy things, only an user with the role BUYER can do it).
 
 Provide these accounts with enough ether. You can do that easily in a local environemnt adding the following options to the Ganache command (step 3 in the following instructions):
 
@@ -70,17 +70,48 @@ Some features are only available on Rinkeby: ENS and Oraclize integration. To de
 $> npm run start
 ```
 
-8. Configure accounts
- 1. Go to http://localhost:3000
+### Configure accounts in the application
+1. Go to http://localhost:3000
 
- ![Home page](/doc/images/home.png)
+![Home page](/doc/images/home.png)
 
- 2. Select in Metamask the account used as deployer
- 3. Click on "Login with Browser" (top right corner)
- 4. You will access to the dashboard of the contract's owner. In this dashboard you could add new administrators and set the emergency flag in the contract (that will disable every write operation, except the withdrawal). In "Add seller" form you can add an ETH address to include it as administrator of the application.
+2. Select in Metamask the account used as deployer
+3. Click on "Login with Browser" (top right corner)
+4. You will access to the dashboard of the contract's owner. In this dashboard you could add new administrators and set the emergency flag in the contract (that will disable every write operation, except the withdrawal). In "Add seller" form you can add an ETH address to include it as administrator of the application.
 
- 5. Logout, change your Metamask account to select the Admin account and refresh the page (sometimes the web application doesn't take care of the change in Metamaks)
- 6. Login again. Now you should see the dashboard of an Admin account, allowing you to add new sellers.
+![Owner page](/doc/images/owner.png)
+
+5. Logout, change your Metamask account to select the Admin account and refresh the page (sometimes the web application doesn't take care of the change in Metamaks)
+6. Login again. Now you should see the dashboard of an Admin account, allowing you to add new sellers.
+
+![Admin page](/doc/images/admin.png)
+
+7. Add a different ETH address as seller. Logout, select this Seller addres in Metamask and refresh the page and login again. Now you should see the dashboard of a Seller account, allowing you to add new stores.
+
+![Seller page](/doc/images/seller.png)
+
+8. Add some stores and some items on each store.
+![Add item](/doc/images/addItem.png)
+
+### Buying and purchasing
+
+1. Logout, select the Buyer account in Metamask and login again. Now you should see the dashboard of a Buyer account, with the list of every store of every seller in the application.
+
+![Buyer page](/doc/images/buyer.png)
+
+2. Select any store. You will see the list of items in that store.
+
+![Items](/doc/images/items.png)
+
+3. Click on the green buttom on any item to select the number of items that you want to buy.
+
+![Purchase](/doc/images/purchase.png)
+
+4. Accept the transaction. Take into account that this transaction include the value to buy the item(s).
+
+5. Login as the seller of the purcased item, and go to your Profile (link in the top right corner). From that you will be able to withdraw your funds.
+
+![Withdraw](/doc/images/withdraw.png)
 
 ## Flows
 
