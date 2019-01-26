@@ -10,7 +10,7 @@ export const DEFAULT_GAS_PRICE = '50000000000'; // 50 gwei in this case
 export const DEFAULT_GAS_LIMIT_DELETE_OPERATION = 100000;
 export const DEFAULT_GAS_LIMIT_WITHDRAW_OPERATION = 100000;
 
-export function initUport() {
+export async function initUport() {
     uport = new Connect('Jesus Marketplace', {
         network: 'rinkeby',
         profileImage: {'/': '/ipfs/QmRpJ9spc8DuFJTBh91Xm1L8TgvE3tvo2p5UvTxcEwVhsm'},
