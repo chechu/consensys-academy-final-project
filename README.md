@@ -101,7 +101,7 @@ $> npm run start
 
 2. Select any store. You will see the list of items in that store.
 
-![Items](/doc/images/items.png)
+![Items](/doc/images/store.png)
 
 3. Click on the green buttom on any item to select the number of items that you want to buy.
 
