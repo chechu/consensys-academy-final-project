@@ -1,6 +1,6 @@
 import { initBrowserProvider, initUport } from './connectors';
 import { initContract as initMarketplaceContract } from './contracts/marketplace';
-import { initContract as initKrakenContract, subscribeToKrakenPriceTicker } from './contracts/krakenPriceTicker';
+import { subscribeToKrakenPriceTicker } from './contracts/krakenPriceTicker';
 
 export default function enableWeb3() {
     return next => (reducer, initialState, enhancer) => {
