@@ -32,15 +32,14 @@ class AddAdmin extends React.Component {
                             <Grid.Column>
                                 <Form onSubmit={(event) => { this.onAddAdminClick(event, this.state.value, this.props.ensEnabled)}}>
                                     <Form.Group>
-                                        <Form.Field inline value={this.state.value} onChange={this.handleChange}>
+                                        <Form.Field required inline value={this.state.value} onChange={this.handleChange}>
                                             <label>Admin address</label>
-                                            <Input placeholder={'Address' + ensPlaceholder} />
+                                            <Input required placeholder={'Address' + ensPlaceholder} />
                                         </Form.Field>
                                         <Form.Button positive
                                             labelPosition='right'
                                             icon='add circle'
-                                            content='Add admin'
-                                             />
+                                            content='Add admin' />
                                     </Form.Group>
                                 </Form>
                             </Grid.Column>

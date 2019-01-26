@@ -32,15 +32,14 @@ class AddSeller extends React.Component {
                             <Grid.Column>
                                 <Form onSubmit={(event) => { this.onAddSellerClick(event, this.state.value, this.props.ensEnabled)}}>
                                     <Form.Group>
-                                        <Form.Field inline value={this.state.value} onChange={this.handleChange}>
+                                        <Form.Field required inline value={this.state.value} onChange={this.handleChange}>
                                             <label>Seller address</label>
                                             <Input placeholder={'Address' + ensPlaceholder} />
                                         </Form.Field>
                                         <Form.Button positive
                                             labelPosition='right'
                                             icon='add circle'
-                                            content='Add seller'
-                                             />
+                                            content='Add seller' />
                                     </Form.Group>
                                 </Form>
                             </Grid.Column>

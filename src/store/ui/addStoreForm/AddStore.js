@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container, Segment, Form, Header, Input } from 'semantic-ui-react';
+import { Container, Segment, Form, Header, Input, Button } from 'semantic-ui-react';
 
 class AddStore extends React.Component {
     constructor(props) {
@@ -22,15 +22,14 @@ class AddStore extends React.Component {
                     <Header>Add a new store</Header>
                     <Form onSubmit={(event) => { this.onAddStoreClick(event, this.state.value)}}>
                         <Form.Group>
-                            <Form.Field inline value={this.state.value} onChange={this.handleChange}>
+                            <Form.Field required inline value={this.state.value} onChange={this.handleChange}>
                                 <label>Store name</label>
-                                <Input placeholder='Store name' />
+                                <Input required placeholder='Store name' />
                             </Form.Field>
                             <Form.Button positive
                                 labelPosition='right'
                                 icon='add circle'
-                                content='Add store'
-                                 />
+                                content='Add store' />
                         </Form.Group>
                     </Form>
                 </Segment>
