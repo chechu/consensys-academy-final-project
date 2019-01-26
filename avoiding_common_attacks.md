@@ -2,15 +2,15 @@
 
 ## Reentrancy
 
-I've implemented the Checks-Effects-Interactions pattern, as I explain [here](/design_pattern_desicions.md). The most importan method related with this attack is `withdraw`, where the transfer is done at the end.
+I've implemented the [Checks-Effects-Interactions](https://solidity.readthedocs.io/en/develop/security-considerations.html?highlight=check%20effects#use-the-checks-effects-interactions-pattern) pattern, as I've explained [here](/design_pattern_desicions.md). The most important method related with this attack is `withdraw`, where the transfer (that can imply an invokation on untrusted contract) is done at the end, after the state modifications.
 
 ## Integer Overflow and Underflow
 
-I've used the library [Safe Math](https://github.com/OpenZeppelin/openzeppelin-solidity/blob/master/contracts/math/SafeMath.sol) to avoid this attack. In other cases I've included checks on parameters to take care on it.
+I've used the library [Safe Math](https://github.com/OpenZeppelin/openzeppelin-solidity/blob/master/contracts/math/SafeMath.sol), as a _demostration of integration with an external library_, to avoid this attack. The use case is really useless because I'm adding two values in wei stored in `uint256` variables, so the overflow will never be able to happen.
 
-## DoS with Block Gas Limit
+In other cases I've included checks on parameters to take care on this kind of attack. For instance, in the `purchase` method I require the number of items to buy to be bigger than zero (to avoid the overflow updating the remaining number of items), and equal or smaller than the number of available items (to avoid the underflow on updating).
 
-### Gas limit and loops
+## DoS with Block Gas Limit - Loops
 
 I've avoided `while` loops, to avoid this kind of attacks. To avoid `while` loops I had to add some extra data in the contract structs. For instance, `Item` has a `skuIndex` field with the index of that item in another data structure. With this data redundancy I can avoid to iterate on that structure.
 

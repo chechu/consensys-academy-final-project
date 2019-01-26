@@ -16,7 +16,7 @@ class AddAdmin extends React.Component {
     }
 
     render() {
-        const ensDescription = this.props.ensEnabled ? 'or the <strong>ENS name</strong> ' : '';
+        const ensDescription = this.props.ensEnabled ? <span>or the <strong>ENS name</strong> </span> : '';
         const ensPlaceholder = this.props.ensEnabled ? ' or ENS name' : '';
         return (
             <Container text>

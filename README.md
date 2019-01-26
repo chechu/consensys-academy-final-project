@@ -4,26 +4,28 @@ This the repository of the ConsenSys Academy’s 2018-2019 Developer Program Fin
 
 ## Content
 
-1. [Description](#description)
+1. [Introduction](#introduction)
 2. [Local set up](#local-set-up)
 3. [Rinkeby set up](#rinkeby-set-up)
 4. [Flows](#flows)
- * [Configure accounts in the application](#configure-accounts-in-the-application)
- * [Buying and purchasing](#buying-and-purchasing)
- * [Buying and purchasing](#buying-and-purchasing)
-5. [Design pattern desicions](/design_pattern_desicions.md)
-6. [Avoiding common attacks](/avoiding_common_attacks.md)
-7. [Integrations](#integrations)
+   * [Configure accounts in the application](#configure-accounts-in-the-application)
+   * [Buying and purchasing](#buying-and-purchasing)
+5. [Integrations](#integrations)
+   * [Uport](#uport)
+   * [Oraclize](#oraclize)
+   * [ENS](#ens)
+   * [Open Zeppelin](#open-zeppelin)
+6. [Design pattern desicions](/design_pattern_desicions.md)
+7. [Avoiding common attacks](/avoiding_common_attacks.md)
 
-## Description
+## Introduction
 
 This DApp simulates a marketplace based on Ethereum. The main components are:
 
-* Web application. React project with the user interfact to interact with the contracts.
+* **Web application**. React project with the user interfact to interact with the contracts.
+* **Smart contract [_Marketplace_](https://github.com/chechu/consensys-academy-final-project/blob/master/contracts/Marketplace.sol)**. It manages the data associated with the marketplace in Ethereum: list of users, stores and items.
 
-* Smart contract [*Marketplace*](https://github.com/chechu/consensys-academy-final-project/blob/master/contracts/Marketplace.sol). It manages the data associated with the marketplace in Ethereum: list of users, stores and items.
-
-* Smart contract [*KrakenPriceTicker*](https://github.com/chechu/consensys-academy-final-project/blob/master/contracts/KrakenPriceTicker.sol). Based on [this one](https://github.com/oraclize/ethereum-examples/blob/master/solidity/KrakenPriceTicker.sol), it allows to keep updated the exchange ration ETH-USD using a oracle of [Oraclize](http://www.oraclize.it/).
+* **Smart contract [_KrakenPriceTicker_](https://github.com/chechu/consensys-academy-final-project/blob/master/contracts/KrakenPriceTicker.sol)**. Based on [this one](https://github.com/oraclize/ethereum-examples/blob/master/solidity/KrakenPriceTicker.sol), it allows to keep updated the exchange ration ETH-USD using a oracle of [Oraclize](http://www.oraclize.it/).
 
 ## Local set up
 
@@ -132,6 +134,61 @@ These address are included in the codebase, so you don't need to change it to co
 
 ## Integrations
 
-* Uport - Login and management of transactions
-* Oraclize - Only in Rinkeby, to get the exchange ratio ETH-USD
-* ENS - Only in Rinkeby, to use ENS names instead of ETH address
+### Uport
+
+The user can perform login and signing of transactions with the Uport mobile application. The integration is unsecured, not ready for production environments, because the keypair with private information of the distribute entity to interact with is stored in a [public file on the repository]((./blob/master/src/util/connectors.js#L21)). This keypair should be managed in a server.
+
+To login with Uport, click on the "Login with Uport" link, at top right corner in the homepage. A QR code will be shown to you, and you should scan it with the Uport mobile app ([Android](https://play.google.com/store/apps/details?id=com.uportMobile&hl=en), [IPhone](https://itunes.apple.com/us/app/uport-id/id1123434510?mt=8)).
+
+![Login with Uport](/doc/images/uport.png)
+
+After scanning your QR code, the mobile application will ask you for logining in the application with an associated ETH account. You can create a new one in that moment.
+
+![Uport mobile](/doc/images/uport_mobile.png)
+
+A successful login process will store data in your local storage, so following logins won't ask you for scanning any QR code. You will only have to accept the login in your mobile. From now on, every time you need to sign a transaction the Uport mobile application warn you to accept it.
+
+### Oraclize
+
+The integration with Oraclize is just a proof of concept. We are deploying the contract KrakenPriceTicker, that has the following relevant parts:
+
+* Method `update()`. It makes a request to another Oraclize contract, asking it for an update on the exchange ratio that we want.
+* Method `__callback()`. Executed by Oraclize on our contract, providing the updated value that we requested previously.
+* Public variable `priceETHUSD`. Where we store the update value received in `__callback()`.
+
+Our web application requests this `priceETHUSD` value, and it's subscribed to change on it via Ethereum events. The application shows in the footer the updated value, and it uses it during the checkout process to give an estimation of how much will cost the purchase in USD.
+
+To update the value of `priceETHUSD`, an external call should be done to the method `updated`. An alternative could be to invoke this method on the `__callback` method, to keep a continous loop of updating.
+
+**Note:** This integration is only running when our contracts are deployed in Rinkeby, because of the interaction with the Oraclize contracts.
+
+### ENS
+
+There are two use cases where you could need to add an ETH address: adding a new admin and adding a new seller. In both cases, instead of an ETH address, you can use a valid ENS name. Internally the web application will resolve this name to an ETH address, that will be used under the hood.
+
+**Note:** This integration is only running when our contracts are deployed in Rinkeby, because of the interaction with the ENS contracts.
+
+### Open Zeppelin
+
+I've reused two artifacts from the Open Zeppelin project:
+
+* [Ownable contract](https://github.com/OpenZeppelin/openzeppelin-solidity/blob/master/contracts/ownership/Ownable.sol), to manage the ownership of the contract, and who can do actions reserved to the owner ot it.
+* [Safe Math library](https://github.com/OpenZeppelin/openzeppelin-solidity/blob/master/contracts/math/SafeMath.sol), to perform safe maths operations.
+
+# Final notes
+
+* The homepage image is from https://www.astroprint.com/es/products/p/3d-printing-app-marketplace
+* I've used [uiGradients](https://uigradients.com) to create the backgound.
+* Relevant links for Uport:
+  * https://medium.com/uport/a-complete-list-of-uports-protocols-libraries-and-solutions-63e9b99b9fd6
+  * https://hackernoon.com/uport-transactions-d5b171f7068f
+  * https://disect.diwala.io/
+  * https://github.com/uport-project/uport-connect/blob/db4e1b83cf49a9925995e8e938f00cf71919c237/examples/integration-tutorial/index.js
+  * https://github.com/uport-project/uport-connect
+  * https://developer.uport.me/credentials/login
+  * https://developer.uport.me/uport-connect/reference/index
+  * https://medium.com/uport/different-approaches-to-ethereum-identity-standards-a09488347c87
+  * https://github.com/uport-project/demo/blob/master/src/components/SignTransaction.js
+  * https://medium.com/@uPort/ethdenver-uport-hackathon-projects-fd98d9ff0419
+* Other relevant links:
+  * [Ethereum Natural Specification Format](https://github.com/ethereum/wiki/wiki/Ethereum-Natural-Specification-Format)
