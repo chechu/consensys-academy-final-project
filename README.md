@@ -34,6 +34,9 @@ I'm using SafeMath, from OpenZeppeling project. The use is and edge case, increa
 Sample: michalzalecki.test --> 0x7d20cb28c496a76173ee828ecacfb08deb379e8d
 From: https://michalzalecki.com/register-test-domain-with-ens/
 
+## Copyright
+Homepage image: https://www.astroprint.com/es/products/p/3d-printing-app-marketplace
+
 # Relevant links
 
 [Ethereum Natural Specification Format](https://github.com/ethereum/wiki/wiki/Ethereum-Natural-Specification-Format)

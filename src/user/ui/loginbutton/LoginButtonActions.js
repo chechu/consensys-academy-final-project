@@ -108,24 +108,25 @@ function browserProviderLogin() {
 }
 
 function uportLogin() {
-  return function(dispatch) {
-    const { web3 } = initUport();
-    const getAddress = new Promise((resolve, reject) => {
-        if (web3) {
-            web3.eth.getCoinbase((error, address) => {
-                if (error) {
-                    console.log('Error getting the ETH address: ', error);
-                    reject(error);
-                } else {
-                    resolve(address.toUpperCase());
+    return function(dispatch) {
+        return initUport().then((web3) => {
+            const getAddress = new Promise((resolve, reject) => {
+                if (web3) {
+                    web3.eth.getCoinbase((error, address) => {
+                        if (error) {
+                            console.log('Error getting the ETH address: ', error);
+                            reject(error);
+                        } else {
+                            resolve(address.toUpperCase());
+                        }
+                    });
                 }
             });
-        }
-    });
-    dispatch({ type: LOGIN_METHOD_USED, method: 'uport' });
-    return getAddress
-        .then(getUserData.bind(this, dispatch));
-  }
+            dispatch({ type: LOGIN_METHOD_USED, method: 'uport' });
+            return getAddress
+                .then(getUserData.bind(this, dispatch));
+        });
+    }
 }
 
 const LOGINS = { browserProviderLogin, uportLogin };
