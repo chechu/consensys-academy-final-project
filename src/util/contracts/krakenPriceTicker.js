@@ -1,8 +1,9 @@
 import { getWeb3, DEFAULT_GAS_PRICE } from '../connectors';
 import { ETH_PRICE_UPDATED } from '../actions';
+import config from '../../../config';
 
 const abi = require('./abi/KrakenPriceTicker.json').abi;
-export const CONTRACT_ADDRESS = '0x3C81F477287d9a9E912e526fC0bDC861301D9590';
+export const CONTRACT_ADDRESS = config.krakenPriceTikerAddress;
 
 export let contract;
 
