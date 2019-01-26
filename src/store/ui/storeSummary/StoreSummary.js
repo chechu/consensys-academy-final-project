@@ -1,5 +1,5 @@
 import React from 'react';
-import { Item, Label } from 'semantic-ui-react';
+import { Item } from 'semantic-ui-react';
 import { Link } from 'react-router';
 import AddItemContainer from '../../../item/ui/addItem/AddItemContainer';
 

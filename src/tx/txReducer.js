@@ -1,6 +1,6 @@
 import produce from 'immer';
 import { CONFIRMATIONS_THRESHOLD } from './ui/expectingConfirmations/ExpectingConfirmations';
-import { INIT_TX, CONFIRMATION_TX, ETH_PRICE_UPDATED, NETWORK_VERSION_UPDATED } from '../util/actions';
+import { INIT_TX, CONFIRMATION_TX, ETH_PRICE_UPDATED, NETWORK_VERSION_UPDATED, USER_LOGGED_OUT } from '../util/actions';
 
 const initialState = {
     pendingTx: {}, // Map with pending transactions info
@@ -49,6 +49,10 @@ const txReducer = (state = initialState, action) => {
         return produce(state, (draftState) => {
             draftState.ensEnabled = ENS_SUPPORTED_NETWORK_VERSIONS.includes(action.version);
         });
+    }
+
+    if (action.type === USER_LOGGED_OUT) {
+        return Object.assign({}, state, initialState);
     }
 
     return state

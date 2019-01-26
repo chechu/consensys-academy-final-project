@@ -9,6 +9,7 @@ import {
     IS_EMERGENCY_UPDATED,
     ETH_PRICE_UPDATED,
     NETWORK_VERSION_UPDATED,
+    LOGIN_METHOD_USED,
 } from '../../../util/actions';
 
 function userLoggedIn(user) {
@@ -68,7 +69,6 @@ async function getUserData(dispatch, address) {
 
 function checkEnsAvailability(dispatch) {
     getWeb3().eth.net.getId().then(function(version) {
-        console.log({version})
         dispatch({ type: NETWORK_VERSION_UPDATED, version });
     });
 }
@@ -100,6 +100,7 @@ function browserProviderLogin() {
                     });
                 }
             });
+            dispatch({ type: LOGIN_METHOD_USED, method: 'browser' });
             return getAddress
                 .then(getUserData.bind(this, dispatch));
         });
@@ -118,16 +119,10 @@ function uportLogin() {
                 } else {
                     resolve(address.toUpperCase());
                 }
-                /*
-                uport.requestDisclosure({requested: ['name', 'country', 'image', 'avatar'], notifications: true, verified: ['Jesus Marketplace info']});
-                uport.onResponse('disclosureReq').then(res => {
-                    console.log({res})
-                    dispatch(userLoggedIn({ ...res.payload, address, did: uport.did }));
-                });
-                */
             });
         }
     });
+    dispatch({ type: LOGIN_METHOD_USED, method: 'uport' });
     return getAddress
         .then(getUserData.bind(this, dispatch));
   }
