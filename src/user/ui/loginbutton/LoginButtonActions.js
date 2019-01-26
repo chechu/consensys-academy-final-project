@@ -119,13 +119,6 @@ function uportLogin() {
                 } else {
                     resolve(address.toUpperCase());
                 }
-                /*
-                uport.requestDisclosure({requested: ['name', 'country', 'image', 'avatar'], notifications: true, verified: ['Jesus Marketplace info']});
-                uport.onResponse('disclosureReq').then(res => {
-                    console.log({res})
-                    dispatch(userLoggedIn({ ...res.payload, address, did: uport.did }));
-                });
-                */
             });
         }
     });

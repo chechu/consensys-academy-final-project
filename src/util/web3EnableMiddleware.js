@@ -7,7 +7,7 @@ export default function enableWeb3() {
         const store = next(reducer, initialState, enhancer);
 
         function enableWeb3() {
-            if (!initialState.user || !initialState.user.data) {
+            if (!initialState || !initialState.user || !initialState.user.data) {
                 return Promise.resolve()
             }
 

@@ -1,7 +1,7 @@
 import { getWeb3, DEFAULT_GAS_PRICE } from '../connectors'
 
 const abi = require('./abi/Marketplace.json').abi;
-const CONTRACT_ADDRESS = '0x49879Ea961c95E7b63D0f2E4A30bc60221da69f4';
+export const CONTRACT_ADDRESS = '0x49879Ea961c95E7b63D0f2E4A30bc60221da69f4';
 
 export let contract;
 
