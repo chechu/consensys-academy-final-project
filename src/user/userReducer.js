@@ -4,6 +4,7 @@ import {
     USER_LOGGED_OUT,
     USER_PENDING_FUNDS_UPDATED,
     IS_EMERGENCY_UPDATED,
+    LOGIN_METHOD_USED,
 } from '../util/actions';
 
 const initialState = {
@@ -11,6 +12,7 @@ const initialState = {
     balance: null,
     pendingFunds: null,
     isEmergency: null,
+    loginMethod: null,
 };
 
 const userReducer = (state = initialState, action) => {
@@ -21,9 +23,7 @@ const userReducer = (state = initialState, action) => {
     }
 
     if (action.type === USER_LOGGED_OUT) {
-        return Object.assign({}, state, {
-            data: null,
-        });
+        return Object.assign({}, state, initialState);
     }
 
     if (action.type === USER_BALANCE_UPDATED) {
@@ -41,6 +41,12 @@ const userReducer = (state = initialState, action) => {
     if (action.type === IS_EMERGENCY_UPDATED) {
         return Object.assign({}, state, {
             isEmergency: action.isEmergency,
+        });
+    }
+
+    if (action.type === LOGIN_METHOD_USED) {
+        return Object.assign({}, state, {
+            loginMethod: action.method,
         });
     }
 

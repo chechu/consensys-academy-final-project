@@ -1,5 +1,5 @@
 import produce from 'immer';
-import { PULL_STORES, PULL_STORE, PULL_ITEMS } from '../util/actions';
+import { USER_LOGGED_OUT, PULL_STORES, PULL_STORE, PULL_ITEMS } from '../util/actions';
 
 const initialState = {
     storesBySeller: { }, // A map with sellerAddress: { stores: [StoreMetadata] }
@@ -16,6 +16,10 @@ const storeReducer = (state = initialState, action) => {
 
     if (action.type === PULL_ITEMS) {
         return pullItems(state, action.store, action.items);
+    }
+
+    if (action.type === USER_LOGGED_OUT) {
+        return Object.assign({}, state, initialState);
     }
 
     return state

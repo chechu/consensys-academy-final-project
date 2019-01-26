@@ -17,17 +17,19 @@ import store from './store'
 
 const history = syncHistoryWithStore(browserHistory, store)
 
-ReactDOM.render((
-    <Provider store={store}>
-      <Router history={history}>
-        <Route path="/" component={App}>
-          <IndexRoute component={Home} />
-          <Route path="dashboard" component={UserIsAuthenticated(Dashboard)} />
-          <Route path="profile" component={UserIsAuthenticated(Profile)} />
-          <Route path="store/:sellerAddress/:storeId" component={UserIsAuthenticated(StoreContainer)} />
-        </Route>
-      </Router>
-    </Provider>
-  ),
-  document.getElementById('root')
-)
+store.enableWeb3().then(() => {
+    ReactDOM.render((
+        <Provider store={store}>
+            <Router history={history}>
+                <Route path="/" component={App}>
+                    <IndexRoute component={Home} />
+                    <Route path="dashboard" component={UserIsAuthenticated(Dashboard)} />
+                    <Route path="profile" component={UserIsAuthenticated(Profile)} />
+                    <Route path="store/:sellerAddress/:storeId" component={UserIsAuthenticated(StoreContainer)} />
+                </Route>
+            </Router>
+        </Provider>
+        ),
+        document.getElementById('root')
+    )
+})

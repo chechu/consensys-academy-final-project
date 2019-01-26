@@ -20,7 +20,7 @@ class Item extends React.Component {
                     <Card.Header>{this.props.item.name}</Card.Header>
                     <Card.Meta>SKU: {this.props.item.sku.toString()}</Card.Meta>
                     <Card.Description>
-                        Steve wants to add you to the group <strong>best friends</strong>
+                        This should be the description of the item.
                     </Card.Description>
                 </Card.Content>
                 <Card.Content extra>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container, Segment, Form, Header, Input, Button } from 'semantic-ui-react';
+import { Container, Segment, Form, Header, Input } from 'semantic-ui-react';
 
 class AddStore extends React.Component {
     constructor(props) {
