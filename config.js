@@ -1,4 +1,4 @@
 module.exports = {
-    marketPlaceContractAddress: '0xA41Bb3a4bBCA2F33D91f14731aA4f73C71f75E7E',
-    krakenPriceTikerAddress: '0x4e1655596E0AAd6611e94E9D1bBEf3C92A67Cb08',
+    marketPlaceContractAddress: '0x797D8e86aa8Ab3236C7565303dCbB3BC9e9E452B',
+    krakenPriceTikerAddress: '0x04Dc125abfBE154ED1679890A708709a3062b927',
 }

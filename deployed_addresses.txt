@@ -1,0 +1,4 @@
+The contracts are deployed in Rinkeby in the following addresses:
+* Migrations: 0x797D8e86aa8Ab3236C7565303dCbB3BC9e9E452B
+* Marketplace: 0x797D8e86aa8Ab3236C7565303dCbB3BC9e9E452B
+* Kraken Price Ticker: 0x04Dc125abfBE154ED1679890A708709a3062b927

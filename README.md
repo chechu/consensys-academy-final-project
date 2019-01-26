@@ -82,8 +82,8 @@ $> npm run start
 ## Rinkeby set up
 
 The contracts are deployed in Rinkeby in the following addresses:
-* Marketplace: [0xA41Bb3a4bBCA2F33D91f14731aA4f73C71f75E7E](https://rinkeby.etherscan.io/address/0xA41Bb3a4bBCA2F33D91f14731aA4f73C71f75E7E)
-* Kraken Price Ticker: [0x4e1655596E0AAd6611e94E9D1bBEf3C92A67Cb08](https://rinkeby.etherscan.io/address/0x4e1655596E0AAd6611e94E9D1bBEf3C92A67Cb08)
+* Marketplace: [0x797D8e86aa8Ab3236C7565303dCbB3BC9e9E452B](https://rinkeby.etherscan.io/address/0x797D8e86aa8Ab3236C7565303dCbB3BC9e9E452B)
+* Kraken Price Ticker: [0x04Dc125abfBE154ED1679890A708709a3062b927](https://rinkeby.etherscan.io/address/0x04Dc125abfBE154ED1679890A708709a3062b927)
 
 These address are included in the codebase, so you don't need to change it to connect to Rinkeby, just run the local server with `npm run start`.
 
