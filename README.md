@@ -8,9 +8,9 @@ This the repository of the ConsenSys Academy’s 2018-2019 Developer Program Fin
 2. [Local set up](#local-set-up)
 3. [Rinkeby set up](#rinkeby-set-up)
 4. [Flows](#flows)
- 1. [Configure accounts in the application](#configure-accounts-in-the-application)
- 1. [Buying and purchasing](#buying-and-purchasing)
- 1. [Buying and purchasing](#buying-and-purchasing)
+ * [Configure accounts in the application](#configure-accounts-in-the-application)
+ * [Buying and purchasing](#buying-and-purchasing)
+ * [Buying and purchasing](#buying-and-purchasing)
 5. [Design pattern desicions](/design_pattern_desicions)
 6. [Avoiding common attacks](/avoiding_common_attacks)
 
