@@ -2,14 +2,14 @@
 
 ## Reentrancy
 
-I've implemented the Checks-Effects-Interactions pattern, as I explain [here](design_pattern_desicions)
+I've implemented the Checks-Effects-Interactions pattern, as I explain [here](/design_pattern_desicions.md). The most importan method related with this attack is `withdraw`, where the transfer is done at the end.
+
+## Integer Overflow and Underflow
+
+I've used the library [Safe Math](https://github.com/OpenZeppelin/openzeppelin-solidity/blob/master/contracts/math/SafeMath.sol) to avoid this attack. In other cases I've included checks on parameters to take care on it.
+
+## DoS with Block Gas Limit
 
 ### Gas limit and loops
-Removing a store (method implemented in the contract but not in the web application), could generate a gas issue. To delete a store, the contract iterates on the associated items, removing it. If the number of items associated with the store would be too high, we could have a gas limit issue.
 
-One solution could be to perform a logical remove, keeping the store in the contract's storage, but with a flag to ignore it form now on.
-
-A better solution is to store the index in the store struct, and update it when the array is modified.
-
-
-avoiding_common_attacks.md
+I've avoided `while` loops, to avoid this kind of attack. To avoid the `while` loops I've to add some extra data in the contract structs. For instance, `Item` has a `skuIndex` field with the index of that item in another data structure. With this data I avoid to iterate on that structure.

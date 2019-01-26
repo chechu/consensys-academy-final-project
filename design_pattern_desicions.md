@@ -1,4 +1,4 @@
-# Desigh pattern desicions
+# Design pattern desicions
 
 ## Circuit breaker
 

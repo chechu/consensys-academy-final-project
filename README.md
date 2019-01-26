@@ -11,8 +11,9 @@ This the repository of the ConsenSys Academy’s 2018-2019 Developer Program Fin
  * [Configure accounts in the application](#configure-accounts-in-the-application)
  * [Buying and purchasing](#buying-and-purchasing)
  * [Buying and purchasing](#buying-and-purchasing)
-5. [Design pattern desicions](/design_pattern_desicions)
-6. [Avoiding common attacks](/avoiding_common_attacks)
+5. [Design pattern desicions](/design_pattern_desicions.md)
+6. [Avoiding common attacks](/avoiding_common_attacks.md)
+7. [Integrations](#integrations)
 
 ## Description
 
@@ -128,3 +129,9 @@ These address are included in the codebase, so you don't need to change it to co
 5. Login as the seller of the purcased item, and go to your Profile (link in the top right corner). From that you will be able to withdraw your funds.
 
 ![Withdraw](/doc/images/withdraw.png)
+
+## Integrations
+
+* Uport - Login and management of transactions
+* Oraclize - Only in Rinkeby, to get the exchange ratio ETH-USD
+* ENS - Only in Rinkeby, to use ENS names instead of ETH address
