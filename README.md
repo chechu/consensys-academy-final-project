@@ -87,6 +87,8 @@ The contracts are deployed in Rinkeby in the following addresses:
 
 These address are included in the codebase, so you don't need to change it to connect to Rinkeby, just run the local server with `npm run start`.
 
+In that Marketplace contract there are several stores and items, so you should be able to interact with it as a normal buyer (any valid account in Rinkeby). **If you want to create a Seller or an Admin user, [contact me](https://github.com/chechu) and I'll add you to the contract with these roles**.
+
 ## Flows
 
 ### Configure accounts in the application
