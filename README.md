@@ -1,57 +1,49 @@
-# consensys-academy-final-project
-ConsenSys Academy’s 2018 Developer Program Final Project
+# ConsenSys Academy’s 2018-2019 Developer Program Final Project
 
-I'm using Uport Connect to make a simple (not production ready) integration with Uport, where the requests are signed in the Browser Application with a temporary (stored in the local storage) private key (for more info see https://developer.uport.me/uport-connect/reference/index#Connect+sendVerification)
+This the repository of the ConsenSys Academy’s 2018-2019 Developer Program Final Project develop by [Jesús Lanchas Sampablo](https://github.com/chechu).
 
-## How did I remove an item from an indexed and unsorted array
-Moving the last item of the array on the position of the item that I want to remove, and decrementing the length of the array. Inspired in https://github.com/su-squares/ethereum-contract/blob/master/contracts/SuNFT.sol#L296.
+## Content
 
-According to this: https://ethereum.stackexchange.com/a/39302 You don't need to delete explicitly using `delete array[index]`. It's enough with `array.length--`.
+1. [Description](#description)
+2. [Set up](#set-up)
+3. [Flows](#flows)
 
-## Circuit breaker
-The flag `stopped` is public, to allow to know if the contract is stopped or not from outside.
+## Description
 
-## Design patterns
-* Circuit breaker
-* Withdrawal. https://solidity.readthedocs.io/en/v0.5.3/common-patterns.html#withdrawal-from-contracts
-* Restricting access, with roles and ownership. https://solidity.readthedocs.io/en/v0.5.3/common-patterns.html#restricting-access
-* Checks-Effects-Interactions pattern, to avoid re-entrancy, in the withdraw method.
+This DApp simulates a marketplace based on Ethereum. The main components are:
 
-## Review of security considerations
-https://solidity.readthedocs.io/en/v0.5.3/security-considerations.html#security-considerations
+* Web application. React project with the user interfact to interact with the contracts.
 
-### Gas limit and loops
-Removing a store (method implemented in the contract but not in the web application), could generate a gas issue. To delete a store, the contract iterates on the associated items, removing it. If the number of items associated with the store would be too high, we could have a gas limit issue.
+* Smart contract [*Marketplace*](https://github.com/chechu/consensys-academy-final-project/blob/master/contracts/Marketplace.sol). It manages the data associated with the marketplace in Ethereum: list of users, stores and items.
 
-One solution could be to perform a logical remove, keeping the store in the contract's storage, but with a flag to ignore it form now on.
+* Smart contract [*KrakenPriceTicker*](https://github.com/chechu/consensys-academy-final-project/blob/master/contracts/KrakenPriceTicker.sol). Based on [this one](https://github.com/oraclize/ethereum-examples/blob/master/solidity/KrakenPriceTicker.sol), it allows to keep updated the exchange ration ETH-USD using a oracle of [Oraclize](http://www.oraclize.it/).
 
-A better solution is to store the index in the store struct, and update it when the array is modified.
+## Set up
 
-## Libraries
-I'm using SafeMath, from OpenZeppeling project. The use is and edge case, increasing the pending funds, but it's just a demo of using a library.
+To configure an run the web application in local, connected to smart contracts deployed in a local running Ganache, follow the next steps:
 
-## ENS
-Sample: michalzalecki.test --> 0x7d20cb28c496a76173ee828ecacfb08deb379e8d
-From: https://michalzalecki.com/register-test-domain-with-ens/
+1. Clone this repository:
 
-## Copyright
-Homepage image: https://www.astroprint.com/es/products/p/3d-printing-app-marketplace
+```
+$> git clone git@github.com:chechu/consensys-academy-final-project.git
+```
 
-# Relevant links
+2. Install dependencies
 
-[Ethereum Natural Specification Format](https://github.com/ethereum/wiki/wiki/Ethereum-Natural-Specification-Format)
+```
+$> npm install
+```
 
-## Stylesheets
-https://uigradients.com
+3. Run Ganache locally
 
-## Links for Uport
-* https://medium.com/uport/a-complete-list-of-uports-protocols-libraries-and-solutions-63e9b99b9fd6
-* https://hackernoon.com/uport-transactions-d5b171f7068f
-* https://disect.diwala.io/
-* https://github.com/uport-project/uport-connect/blob/db4e1b83cf49a9925995e8e938f00cf71919c237/examples/integration-tutorial/index.js
-* https://github.com/uport-project/uport-connect
-* https://developer.uport.me/credentials/login
-* https://developer.uport.me/uport-connect/reference/index
-* https://medium.com/uport/different-approaches-to-ethereum-identity-standards-a09488347c87
-* https://github.com/uport-project/demo/blob/master/src/components/SignTransaction.js
-* https://medium.com/@uPort/ethdenver-uport-hackathon-projects-fd98d9ff0419
+```
+$> ganache-cli
+```
+
+4. Edit the file `privateConfig.js`, to provide this data:
+ * Private key to use in the contract's migrations
+ * [Infura](https://infura.io/dashboard) project id to use in the contract's deployment in Rinkeby. You can create a new project from the Infura dashboard, and copy the project id provided.
+
+## Flows
+
+
