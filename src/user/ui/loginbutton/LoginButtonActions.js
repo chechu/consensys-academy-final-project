@@ -1,7 +1,7 @@
 import { initUport, initBrowserProvider, getWeb3 } from './../../../util/connectors.js';
 import { browserHistory } from 'react-router';
 import { initContract as initMarketplaceContract, contract as marketplace, ROLES } from '../../../util/contracts/marketplace';
-import { initContract as initKrakenContract, contract as kraken } from '../../../util/contracts/krakenPriceTicker';
+import { initContract as initKrakenContract, contract as kraken, subscribeToKrakenPriceTicker } from '../../../util/contracts/krakenPriceTicker';
 import {
     USER_LOGGED_IN,
     USER_BALANCE_UPDATED,
@@ -70,18 +70,6 @@ async function getUserData(dispatch, address) {
 function checkEnsAvailability(dispatch) {
     getWeb3().eth.net.getId().then(function(version) {
         dispatch({ type: NETWORK_VERSION_UPDATED, version });
-    });
-}
-
-function subscribeToKrakenPriceTicker(address, dispatch) {
-    initKrakenContract(address);
-
-    kraken.events.LogNewKrakenPriceTicker({ fromBlock: 0 }, (error, res) => {
-        if (!error) {
-            if (res.returnValues && res.returnValues.price) {
-                dispatch({ type: ETH_PRICE_UPDATED, price: parseFloat(res.returnValues.price, 10) });
-            }
-        }
     });
 }
 

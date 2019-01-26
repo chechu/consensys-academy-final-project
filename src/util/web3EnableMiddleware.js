@@ -1,6 +1,6 @@
 import { initBrowserProvider, initUport } from './connectors';
 import { initContract as initMarketplaceContract } from './contracts/marketplace';
-import { initContract as initKrakenContract } from './contracts/krakenPriceTicker';
+import { initContract as initKrakenContract, subscribeToKrakenPriceTicker } from './contracts/krakenPriceTicker';
 
 export default function enableWeb3() {
     return next => (reducer, initialState, enhancer) => {
@@ -12,9 +12,9 @@ export default function enableWeb3() {
             }
 
             if (initialState.user.loginMethod === 'uport') {
-                return initUport().then(() => initContracts(initialState.user.data.address));
+                return initUport().then(() => initContracts(initialState.user.data.address, store));
             }
-            return initBrowserProvider().then(() => initContracts(initialState.user.data.address));
+            return initBrowserProvider().then(() => initContracts(initialState.user.data.address, store));
         }
 
         return {
@@ -24,7 +24,7 @@ export default function enableWeb3() {
     }
 }
 
-function initContracts(address) {
+function initContracts(address, store) {
     initMarketplaceContract(address);
-    initKrakenContract(address);
+    subscribeToKrakenPriceTicker(address, store.dispatch);
 }

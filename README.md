@@ -44,6 +44,12 @@ $> ganache-cli
  * Private key to use in the contract's migrations
  * [Infura](https://infura.io/dashboard) project id to use in the contract's deployment in Rinkeby. You can create a new project from the Infura dashboard, and copy the project id provided.
 
+5. Deploy the contracts
+```
+$> truffle migrate --reset
+```
+Some features are only available on Rinkeby: ENS and Oraclize integration. To deploy the contracts on Rinkeby you can add `--network rinkeby` to the previous truffle command.
+
 ## Flows
 
 
