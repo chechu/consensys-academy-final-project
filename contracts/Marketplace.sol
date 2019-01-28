@@ -230,7 +230,6 @@ contract Marketplace is Ownable {
      * @param storeIndex The index of the store, in the array of stores, that we want to remove
      */
     function removeStore(bytes32 storeId, uint storeIndex) public stopInEmergency isSeller isSellerOwner(storeId) {
-        // TODO - Taking into account this: https://solidity.readthedocs.io/en/develop/types.html#delete
         Empire storage empire = empires[msg.sender];
         Store storage store = empires[msg.sender].stores[storeId];
 
@@ -331,7 +330,6 @@ contract Marketplace is Ownable {
         isItemSeller(storeId, sku) {
         Store storage store = empires[msg.sender].stores[storeId];
 
-        // TODO Check integer overflows (more in the buy operation)
         require(price > 0, 'Price must be a positive number');
         require(availableNumItems >= 0, 'Available items must be a positive number or zero');
 
