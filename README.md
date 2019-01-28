@@ -1,6 +1,6 @@
 # ConsenSys Academy’s 2018-2019 Developer Program Final Project
 
-This the repository of the ConsenSys Academy’s 2018-2019 Developer Program Final Project develop by [Jesús Lanchas Sampablo](https://github.com/chechu).
+This the repository of the ConsenSys Academy’s 2018-2019 Developer Program Final Project developed by [Jesús Lanchas Sampablo](https://github.com/chechu).
 
 ## Content
 
